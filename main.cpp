@@ -1,5 +1,5 @@
 // main.cpp
-
+// 引入OpenCV库中的核心、图形用户界面和图像处理模块的头文件
 #include<opencv2/core/core.hpp>
 #include<opencv2/highgui/highgui.hpp>
 #include<opencv2/imgproc/imgproc.hpp>
