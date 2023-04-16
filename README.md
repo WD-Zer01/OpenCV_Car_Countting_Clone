@@ -1,0 +1,2 @@
+# OpenCV_Car_Countting_Clone
+基于OpenCV实现车流量统计代码克隆学习并修改
