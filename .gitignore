@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+OpenCV_Car_Countting_Clone/
+!main.cpp
+!Blob.h
+!Blob.cpp

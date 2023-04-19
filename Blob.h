@@ -1,6 +1,6 @@
 // Blob.h
 
-#ifndef MY_BLOB // Èç¹û MY_BLOB Ã»ÓĞ±»¶¨Òå¹ı£¬Ôò¼ÌĞø±àÒë
+#ifndef MY_BLOB
 #define MY_BLOB
 
 #include<opencv2/core/core.hpp>
@@ -11,30 +11,44 @@
 class Blob {
 public:
     // member variables ///////////////////////////////////////////////////////////////////////////
+    // ä¸€ä¸ª cv::Point å¯¹è±¡çš„å‘é‡ï¼Œè¡¨ç¤ºå½“å‰å¸§ä¸­ blob çš„è½®å»“ã€‚
     std::vector<cv::Point> currentContour;
 
-    cv::Rect currentBoundingRect;   // Ò»¸ö Blob µÄÍâ½Ó¾ØĞÎ
+    // ä¸€ä¸ª cv::Rect å¯¹è±¡ï¼Œè¡¨ç¤ºå½“å‰å¸§ä¸­ blob çš„è¾¹ç•ŒçŸ©å½¢ã€‚
+    cv::Rect currentBoundingRect;
 
-    std::vector<cv::Point> centerPositions;   // Ò»¸ö Blob ÖĞĞÄµãµÄÎ»ÖÃÏòÁ¿
+    // ä¸€ä¸ª cv::Point å¯¹è±¡çš„å‘é‡ï¼Œè¡¨ç¤ºåœ¨æ£€æµ‹åˆ° blob çš„æ¯ä¸ªå¸§ä¸­çš„ä¸­å¿ƒä½ç½®ã€‚
+    std::vector<cv::Point> centerPositions;
 
-    double dblCurrentDiagonalSize;   // µ±Ç° Blob µÄ¶Ô½ÇÏß³¤¶È
+    // ä¸€ä¸ª double ç±»å‹çš„å˜é‡ï¼Œè¡¨ç¤ºå½“å‰å¸§ä¸­ blob çš„å¯¹è§’çº¿å¤§å°ã€‚
+    double dblCurrentDiagonalSize;
 
-    double dblCurrentAspectRatio;   // µ±Ç° Blob µÄ³¤¿í±È
+    // ä¸€ä¸ª double ç±»å‹çš„å˜é‡ï¼Œè¡¨ç¤ºå½“å‰å¸§ä¸­ blob çš„çºµæ¨ªæ¯”ã€‚ 
+    double dblCurrentAspectRatio;
 
-    bool blnCurrentMatchFoundOrNewBlob;   // ±íÊ¾µ±Ç° Blob ÊÇ·ñÓëÖ®Ç°µÄ Blob Æ¥Åä
+    // ä¸€ä¸ªå¸ƒå°”å€¼ï¼Œè¡¨ç¤º blob æ˜¯å¦ä¸ç°æœ‰ blob åŒ¹é…æˆ–ä¸ºæ–°çš„ blobã€‚
+    bool blnCurrentMatchFoundOrNewBlob;
 
-    bool blnStillBeingTracked;   // ±íÊ¾µ±Ç° Blob ÊÇ·ñÈÔÈ»±»¸ú×Ù
+    // ä¸€ä¸ªå¸ƒå°”å€¼ï¼Œè¡¨ç¤º blob æ˜¯å¦ä»åœ¨è¢«è·Ÿè¸ª
+    bool blnStillBeingTracked;
 
-    int intNumOfConsecutiveFramesWithoutAMatch;   // Ò»ÏµÁĞÁ¬ĞøÖ¡ÖĞ£¬Î´Æ¥ÅäµÄ Blob µÄÊıÁ¿
+    // ä¸€ä¸ªæ•´æ•°ï¼Œè¡¨ç¤º blob åœ¨è¿ç»­çš„å¸§ä¸­æ²¡æœ‰ä¸ç°æœ‰ blob åŒ¹é…çš„å¸§æ•°ã€‚
+    int intNumOfConsecutiveFramesWithoutAMatch;
 
-    cv::Point predictedNextPosition;   // Ô¤²âµ±Ç° Blob µÄÏÂÒ»¸öÎ»ÖÃ
+    // ä¸€ä¸ª cv::Point å¯¹è±¡ï¼Œè¡¨ç¤ºä¸‹ä¸€å¸§ä¸­ blob çš„é¢„æµ‹ä¸­å¿ƒä½ç½®ã€‚
+    cv::Point predictedNextPosition;
 
-    // function prototypes ////////////////////////////////////////////////////////////////////////
-    Blob(std::vector<cv::Point> _contour);   // Blob ÀàµÄ¹¹Ôìº¯Êı
+    // function prototypes //////////////////////////////////////////////////////////////////////
+    // Blob ç±»æœ‰ä¸€ä¸ªæ„é€ å‡½æ•°ï¼Œå®ƒä»¥ä¸€ä¸ª cv::Point å¯¹è±¡çš„å‘é‡ä½œä¸ºå‚æ•°ã€‚
+    // è¯¥æ„é€ å‡½æ•°ä½¿ç”¨æä¾›çš„å‘é‡åˆå§‹åŒ– currentContour æˆå‘˜å˜é‡ã€‚
+    Blob(std::vector<cv::Point> _contour);
 
-    void predictNextPosition(void);   // Ô¤²âµ±Ç° Blob µÄÏÂÒ»¸öÎ»ÖÃ£¬²¢½«Æä´æ´¢ÔÚ predictedNextPosition ÖĞ
+    // è¯¥å‡½æ•°ä½¿ç”¨é¢„æµ‹ç®—æ³•æ›´æ–° predictedNextPosition æˆå‘˜å˜é‡ï¼Œ
+    // è¡¨ç¤ºä¸‹ä¸€å¸§ä¸­ blob çš„é¢„æµ‹ä¸­å¿ƒä½ç½®ã€‚
+
+    void predictNextPosition(void);
+
 };
 
-#endif // MY_BLOB
+#endif    // MY_BLOB
 
-#pragma once // Ö¸Ê¾±àÒëÆ÷Ö»ĞèÒªÔÚÒ»¸öÎÄ¼şÖĞ°üº¬Õâ¸öÍ·ÎÄ¼ş
