@@ -1,162 +1,162 @@
 // main.cpp
-// ÒýÈëOpenCV¿âÖÐµÄºËÐÄ¡¢Í¼ÐÎÓÃ»§½çÃæºÍÍ¼Ïñ´¦ÀíÄ£¿éµÄÍ·ÎÄ¼þ
+// ï¿½ï¿½ï¿½ï¿½OpenCVï¿½ï¿½ï¿½ÐµÄºï¿½ï¿½Ä¡ï¿½Í¼ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Í·ï¿½Ä¼ï¿½
 #include<opencv2/core/core.hpp>
 #include<opencv2/highgui/highgui.hpp>
 #include<opencv2/imgproc/imgproc.hpp>
 
-// ÒýÈëÊäÈëºÍÊä³ö²Ù×÷ËùÐèµÄ±ê×¼¿â
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½×¼ï¿½ï¿½
 #include<iostream>
-#include<conio.h>           // Èç¹û²»ÊÇÊ¹ÓÃWindowsÏµÍ³£¬¿ÉÄÜÐèÒª¸ü¸Ä»òÉ¾³ý´ËÐÐ
+#include<conio.h>           // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½WindowsÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ä»ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 
 #include "Blob.h"
 
-// ¶¨ÒåºêÀ´¿ØÖÆÊÇ·ñÏÔÊ¾ÖÐ¼ä´¦Àí²½Öè
-#define SHOW_STEPS            // È¡Ïû»ò×¢ÊÍµô´ËÐÐÀ´ÏÔÊ¾»òÒþ²Ø²½Öè
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ê¾ï¿½Ð¼ä´¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define SHOW_STEPS            // È¡ï¿½ï¿½ï¿½ï¿½×¢ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½
 
-// È«¾Ö±äÁ¿ ///////////////////////////////////////////////////////////////////////////////
-// ¶¨ÒåScalarÀàÐÍµÄ³£Á¿£¬ÓÃÓÚ±íÊ¾OpenCVÖÐµÄÑÕÉ«
+// È«ï¿½Ö±ï¿½ï¿½ï¿½ ///////////////////////////////////////////////////////////////////////////////
+// ï¿½ï¿½ï¿½ï¿½Scalarï¿½ï¿½ï¿½ÍµÄ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½Ê¾OpenCVï¿½Ðµï¿½ï¿½ï¿½É«
 const cv::Scalar SCALAR_BLACK = cv::Scalar(0.0, 0.0, 0.0);
 const cv::Scalar SCALAR_WHITE = cv::Scalar(255.0, 255.0, 255.0);
 const cv::Scalar SCALAR_YELLOW = cv::Scalar(0.0, 255.0, 255.0);
 const cv::Scalar SCALAR_GREEN = cv::Scalar(0.0, 200.0, 0.0);
 const cv::Scalar SCALAR_RED = cv::Scalar(0.0, 0.0, 255.0);
 
-// ÉÏÊö´úÂëµÄ¹¦ÄÜÊÇµ¼ÈëOpenCV¿âºÍ±ê×¼¿âËùÐèµÄÍ·ÎÄ¼þºÍºê£¬ÒÔ¼°¶¨Òå³£Á¿ºÍ±äÁ¿¡£ÆäÖÐ³£Á¿ÊÇ±íÊ¾ÑÕÉ«µÄ³£Á¿£¬±äÁ¿ÊÇÓÃÓÚBlob¼ì²âµÄÈ«¾Ö±äÁ¿¡£
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½OpenCVï¿½ï¿½Í±ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½Ä¼ï¿½ï¿½Íºê£¬ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½å³£ï¿½ï¿½ï¿½Í±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð³ï¿½ï¿½ï¿½ï¿½Ç±ï¿½Ê¾ï¿½ï¿½É«ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½È«ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½
 
-// º¯ÊýÔ­ÐÍ ////////////////////////////////////////////////////////////////////////////
-// ½«µ±Ç°Ö¡µÄBlobÓëÒÑÓÐµÄBlob½øÐÐÆ¥Åä
-void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs, std::vector<Blob>& currentFrameBlobs);
-// ½«µ±Ç°Ö¡µÄBlob¼ÓÈëÒÑÓÐµÄBlobÖÐ
+// ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ ////////////////////////////////////////////////////////////////////////////
+// ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Blobï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½
+void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlob ä½   s, std::vector<Blob>& currentFrameBlobs);
+// ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Blobï¿½ï¿½
 void addBlobToExistingBlobs(Blob& currentFrameBlob, std::vector<Blob>& existingBlobs, int& intIndex);
-// ½«ÐÂµÄBlob¼ÓÈëÒÑÓÐµÄBlobÖÐ
+// ï¿½ï¿½ï¿½Âµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Blobï¿½ï¿½
 void addNewBlob(Blob& currentFrameBlob, std::vector<Blob>& existingBlobs);
-// ¼ÆËãÁ½¸öµãÖ®¼äµÄ¾àÀë
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½
 double distanceBetweenPoints(cv::Point point1, cv::Point point2);
-// »æÖÆ²¢ÏÔÊ¾ÂÖÀª
+// ï¿½ï¿½ï¿½Æ²ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
 void drawAndShowContours(cv::Size imageSize, std::vector<std::vector<cv::Point> > contours, std::string strImageName);
-// »æÖÆ²¢ÏÔÊ¾Blob
+// ï¿½ï¿½ï¿½Æ²ï¿½ï¿½ï¿½Ê¾Blob
 void drawAndShowContours(cv::Size imageSize, std::vector<Blob> blobs, std::string strImageName);
-// ¼ì²éBlobÊÇ·ñ´©¹ý¸ø¶¨µÄÏß£¬²¢·µ»Ø´©¹ýÏßµÄBlobÊýÁ¿
+// ï¿½ï¿½ï¿½Blobï¿½Ç·ñ´©¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ßµï¿½Blobï¿½ï¿½ï¿½ï¿½
 bool checkIfBlobsCrossedTheLine(std::vector<Blob>& blobs, int& intHorizontalLinePosition, int& carCount);
-// ÔÚÍ¼ÏñÉÏ»æÖÆBlobÐÅÏ¢
+// ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½Blobï¿½ï¿½Ï¢
 void drawBlobInfoOnImage(std::vector<Blob>& blobs, cv::Mat& imgFrame2Copy);
-// ÔÚÍ¼ÏñÉÏ»æÖÆÆû³µÊýÁ¿
+// ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void drawCarCountOnImage(int& carCount, cv::Mat& imgFrame2Copy);
 
-// ÉÏÊö´úÂëµÄ¹¦ÄÜÊÇÉùÃ÷º¯ÊýÔ­ÐÍ£¬°üÀ¨ÓÃÓÚBlobÆ¥Åä¡¢Blob»æÖÆºÍÆû³µ´©¹ýÏßµÄ¼ì²âµÈ¡£
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½Í£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½BlobÆ¥ï¿½ä¡¢Blobï¿½ï¿½ï¿½Æºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßµÄ¼ï¿½ï¿½È¡ï¿½
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int main(void) {
 
-    // ´ò¿ªÃûÊÓÆµÎÄ¼þ£¬²¢¼ì²éÊÇ·ñ³É¹¦´ò¿ª¡£Èç¹ûÎÞ·¨´ò¿ªÊÓÆµÎÄ¼þ£¬ÔòÏÔÊ¾´íÎóÏûÏ¢²¢ÍË³ö³ÌÐò¡£
-    // ¶¨ÒåÁËÒ»¸öÃûÎªcapVideoµÄcv::VideoCapture¶ÔÏó£¬ÓÃÓÚ´ÓÊÓÆµÎÄ¼þÖÐ¶ÁÈ¡Ö¡¡£
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½É¹ï¿½ï¿½ò¿ª¡ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÎªcapVideoï¿½ï¿½cv::VideoCaptureï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½ï¿½Ð¶ï¿½È¡Ö¡ï¿½ï¿½
     cv::VideoCapture capVideo;
 
-    // ¶¨ÒåÁËÒ»¸öÃûÎªimgFrame1µÄcv::Mat¶ÔÏó£¬ÓÃÓÚ´æ´¢ÊÓÆµµÄµÚÒ»Ö¡Í¼Ïñ¡£
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÎªimgFrame1ï¿½ï¿½cv::Matï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½Æµï¿½Äµï¿½Ò»Ö¡Í¼ï¿½ï¿½
     cv::Mat imgFrame1;
-    // ¶¨ÒåÁËÒ»¸öÃûÎªimgFrame2µÄcv::Mat¶ÔÏó£¬ÓÃÓÚ´æ´¢ÊÓÆµµÄµÚ¶þÖ¡Í¼Ïñ¡£
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÎªimgFrame2ï¿½ï¿½cv::Matï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½Æµï¿½ÄµÚ¶ï¿½Ö¡Í¼ï¿½ï¿½
     cv::Mat imgFrame2;
 
-    // ¶¨ÒåÁËÒ»¸öÃûÎªblobsµÄstd::vector¶ÔÏó£¬ÓÃÓÚ´æ´¢¼ì²âµ½µÄ³µÁ¾¡£
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Îªblobsï¿½ï¿½std::vectorï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½âµ½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½
     std::vector<Blob> blobs;
 
-    // ¶¨ÒåÁËÒ»¸öÃûÎªcrossingLineµÄcv::PointÊý×é£¬ÓÃÓÚ´æ´¢¿çÔ½µÄÏß¶ÎµÄÆðµãºÍÖÕµã×ø±ê¡£
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÎªcrossingLineï¿½ï¿½cv::Pointï¿½ï¿½ï¿½é£¬ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ß¶Îµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ê¡£
     cv::Point crossingLine[2];
 
-    // ¶¨ÒåÁËÒ»¸öÃûÎªcarCountµÄÕûÊý±äÁ¿£¬ÓÃÓÚ´æ´¢¼ì²âµ½µÄ³µÁ¾ÊýÁ¿£¬²¢½«Æä³õÊ¼»¯Îª0¡£
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÎªcarCountï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½âµ½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Îª0ï¿½ï¿½
     int carCount = 0;
 
-    // ´ò¿ªÎªÊÓÆµÎÄ¼þ£¬¿ÉÒÔÊÇ¾ø¶ÔÂ·¾¶»òÕß×ÓÄ¿Â¼ÎÄ¼þ¼ÐÄÚµÄÊÓÆµÎÄ¼þ£¬Â·¾¶Ò»ÖÂ¾ÍÐÐ£¬²¢½«Æä¸³Öµ¸øcapVideo¶ÔÏó¡£
+    // ï¿½ï¿½Îªï¿½ï¿½Æµï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Â¼ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½ï¿½ï¿½Â·ï¿½ï¿½Ò»ï¿½Â¾ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä¸³Öµï¿½ï¿½capVideoï¿½ï¿½ï¿½ï¿½
     capVideo.open("CarsDrivingUnderBridge.mp4");
 
-    // ¼ì²écapVideo¶ÔÏóÊÇ·ñ³É¹¦´ò¿ªÊÓÆµÎÄ¼þ¡£Èç¹û´ò¿ªÊ§°Ü£¬ÔòÏÔÊ¾´íÎóÏûÏ¢£¬µÈ´ýÓÃ»§ÊäÈëÈÎºÎ×Ö·û²¢ÍË³ö³ÌÐò¡£
-    if (!capVideo.isOpened()) {                                                 // Èç¹û´ò¿ªÊÓÆµÎÄ¼þÊ§°Ü
-        std::cout << "error reading video file" << std::endl << std::endl;      // ÏÔÊ¾´íÎóÐÅÏ¢
-        _getch();                   // Èç¹û²»ÔÚWindowsÆ½Ì¨±àÒë£¬¿ÉÄÜÐèÒª¸ü¸Ä»òÉ¾³ý´ËÐÐ
-        return(0);                                                              // È»ºóÍË³ö³ÌÐò
+    // ï¿½ï¿½ï¿½capVideoï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½È´ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½
+    if (!capVideo.isOpened()) {                                                 // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½Ê§ï¿½ï¿½
+        std::cout << "error reading video file" << std::endl << std::endl;      // ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+        _getch();                   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½WindowsÆ½Ì¨ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ä»ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        return(0);                                                              // È»ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
     if (capVideo.get(CV_CAP_PROP_FRAME_COUNT) < 2) {
         std::cout << "error: video file must have at least two frames";
-        _getch();                   // Èç¹û²»ÔÚWindowsÆ½Ì¨±àÒë£¬¿ÉÄÜÐèÒª¸ü¸Ä»òÉ¾³ý´ËÐÐ
-        return(0);                  // È»ºóÍË³ö³ÌÐò
+        _getch();                   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½WindowsÆ½Ì¨ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ä»ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        return(0);                  // È»ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
-    // ´ÓÊÓÆµÎÄ¼þÖÐ¶ÁÈ¡Ò»Ö¡Í¼Ïñµ½imgFrame1ÖÐ
+    // ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½ï¿½Ð¶ï¿½È¡Ò»Ö¡Í¼ï¿½ï¿½imgFrame1ï¿½ï¿½
     capVideo.read(imgFrame1);
-    // ´ÓÊÓÆµÎÄ¼þÖÐ¶ÁÈ¡Ò»Ö¡Í¼Ïñµ½imgFrame2ÖÐ
+    // ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½ï¿½Ð¶ï¿½È¡Ò»Ö¡Í¼ï¿½ï¿½imgFrame2ï¿½ï¿½
     capVideo.read(imgFrame2);
 
-    // ¼ÆËã¿çÔ½ÏßµÄÎ»ÖÃ// ¼ÆËãÍ¨¹ýÍ¼ÏñÖÐ¼äµÄË®Æ½ÏßµÄy×ø±ê
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ßµï¿½Î»ï¿½ï¿½// ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½Ë®Æ½ï¿½ßµï¿½yï¿½ï¿½ï¿½ï¿½
     int intHorizontalLinePosition = (int)std::round((double)imgFrame1.rows * 0.35);
 
-    // ÉèÖÃË®Æ½ÏßµÄ×ó²àµãµÄx×ø±êÎª0
+    // ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ßµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ï¿½Îª0
     crossingLine[0].x = 0;
-    // ÉèÖÃË®Æ½ÏßµÄ×ó²àµãµÄy×ø±êÎª¼ÆËãµÃµ½µÄy×ø±ê
+    // ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ßµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½yï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½yï¿½ï¿½ï¿½ï¿½
     crossingLine[0].y = intHorizontalLinePosition;
 
-    // ÉèÖÃË®Æ½ÏßµÄÓÒ²àµãµÄx×ø±êÎªÍ¼Ïñ¿í¶È¼õ1
+    // ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ßµï¿½ï¿½Ò²ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ï¿½ÎªÍ¼ï¿½ï¿½ï¿½ï¿½È¼ï¿½1
     crossingLine[1].x = imgFrame1.cols - 1;
-    // ÉèÖÃË®Æ½ÏßµÄÓÒ²àµãµÄy×ø±êÎª¼ÆËãµÃµ½µÄy×ø±ê
+    // ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ßµï¿½ï¿½Ò²ï¿½ï¿½ï¿½yï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½yï¿½ï¿½ï¿½ï¿½
     crossingLine[1].y = intHorizontalLinePosition;
 
-    // ¶¨ÒåÒ»¸öÃûÎªchCheckForEscKeyµÄ×Ö·û±äÁ¿£¬ÓÃÓÚ´æ´¢ÓÃ»§°´¼üµÄÖµ¡£// ³õÊ¼»¯¼ì²éEsc¼üµÄ±äÁ¿Îª0
+    // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÎªchCheckForEscKeyï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½// ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Escï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½Îª0
     char chCheckForEscKey = 0;
 
-    // ³õÊ¼»¯µÚÒ»Ö¡Í¼ÏñµÄ±äÁ¿Îªtrue
+    // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ò»Ö¡Í¼ï¿½ï¿½Ä±ï¿½ï¿½ï¿½Îªtrue
     bool blnFirstFrame = true;
 
-    // ³õÊ¼»¯Ö¡¼ÆÊýÆ÷Îª2£¨ÒòÎªÒÑ¾­¶ÁÈëÁËÁ½Ö¡Í¼Ïñ£©
+    // ï¿½ï¿½Ê¼ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª2ï¿½ï¿½ï¿½ï¿½Îªï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡Í¼ï¿½ï¿½
     int frameCount = 2;
 
-    // µ±ÊÓÆµÎÄ¼þ´ò¿ªÇÒÃ»ÓÐ°´ÏÂEsc¼üÊ±£¬Ö´ÐÐÑ­»·
+    // ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð°ï¿½ï¿½ï¿½Escï¿½ï¿½Ê±ï¿½ï¿½Ö´ï¿½ï¿½Ñ­ï¿½ï¿½
     while (capVideo.isOpened() && chCheckForEscKey != 27) {
 
-        // ÉùÃ÷Ò»¸öÏòÁ¿£¬ÓÃÓÚ´æ´¢µ±Ç°Ö¡ÖÐ¼ì²âµ½µÄÔË¶¯ÎïÌå
+        // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½Ç°Ö¡ï¿½Ð¼ï¿½âµ½ï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½
         std::vector<Blob> currentFrameBlobs;
 
-        // ÏÂÃæµÄ´úÂëÊÇ¶ÔÁ½Ö¡Í¼Ïñ½øÐÐ´¦Àí£¬µÃµ½Ç°¾°ÎïÌåµÄ¶þÖµ»¯Í¼Ïñ¡£
-        // Ê×ÏÈ¶¨ÒåÒ»¸öcurrentFrameBlobs±äÁ¿£¬ÓÃÓÚ´æ´¢µ±Ç°Ö¡ÖÐ¼ì²âµ½µÄËùÓÐBlob£¨Ò»×éÏàÁÚÏñËØ×é³ÉµÄ¶ÔÏó£¬±íÊ¾Í¼ÏñÖÐµÄÒ»¸öÎïÌå£©¡£
-        // È»ºó½«imgFrame1ºÍimgFrame2·Ö±ð¸´ÖÆµ½imgFrame1CopyºÍimgFrame2CopyÖÐ£¬ÒÔ±ã¶ÔËüÃÇ½øÐÐ´¦Àí£¬¶ø²»Ó°ÏìÔ­Ê¼Í¼Ïñ¡£
+        // ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½ï¿½ï¿½Ö¡Í¼ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½Öµï¿½ï¿½Í¼ï¿½ï¿½
+        // ï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½Ò»ï¿½ï¿½currentFrameBlobsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½Ç°Ö¡ï¿½Ð¼ï¿½âµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÉµÄ¶ï¿½ï¿½ó£¬±ï¿½Ê¾Í¼ï¿½ï¿½ï¿½Ðµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½å£©ï¿½ï¿½
+        // È»ï¿½ï¿½imgFrame1ï¿½ï¿½imgFrame2ï¿½Ö±ï¿½ï¿½Æµï¿½imgFrame1Copyï¿½ï¿½imgFrame2Copyï¿½Ð£ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½Ç½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½Ô­Ê¼Í¼ï¿½ï¿½
         cv::Mat imgFrame1Copy = imgFrame1.clone();
         cv::Mat imgFrame2Copy = imgFrame2.clone();
 
-        // ¶¨ÒåÒ»¸öÃûÎªimgDifferenceµÄcv::Mat¶ÔÏó£¬ÓÃÓÚ´æ´¢Á½Ö¡Í¼ÏñµÄ²îÖµ¡£
+        // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÎªimgDifferenceï¿½ï¿½cv::Matï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½Ö¡Í¼ï¿½ï¿½Ä²ï¿½Öµï¿½ï¿½
         cv::Mat imgDifference;
-        // ¶¨ÒåÒ»¸öÃûÎªimgThreshµÄcv::Mat¶ÔÏó£¬ÓÃÓÚ´æ´¢¶þÖµ»¯Í¼Ïñ¡£
+        // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÎªimgThreshï¿½ï¿½cv::Matï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½Öµï¿½ï¿½Í¼ï¿½ï¿½
         cv::Mat imgThresh;
 
-        // ½«imgFrame1CopyºÍimgFrame2Copy×ª»»Îª»Ò¶ÈÍ¼Ïñ¡£
+        // ï¿½ï¿½imgFrame1Copyï¿½ï¿½imgFrame2Copy×ªï¿½ï¿½Îªï¿½Ò¶ï¿½Í¼ï¿½ï¿½
         cv::cvtColor(imgFrame1Copy, imgFrame1Copy, CV_BGR2GRAY);
         cv::cvtColor(imgFrame2Copy, imgFrame2Copy, CV_BGR2GRAY);
 
-        // Ê¹ÓÃ¸ßË¹Ä£ºý¶ÔimgFrame1CopyºÍimgFrame2Copy½øÐÐÆ½»¬´¦Àí£¬ÒÔÈ¥³ýÔëÉùºÍÏ¸½Ú¡£
+        // Ê¹ï¿½Ã¸ï¿½Ë¹Ä£ï¿½ï¿½ï¿½ï¿½imgFrame1Copyï¿½ï¿½imgFrame2Copyï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½Ú¡ï¿½
         cv::GaussianBlur(imgFrame1Copy, imgFrame1Copy, cv::Size(5, 5), 0);
         cv::GaussianBlur(imgFrame2Copy, imgFrame2Copy, cv::Size(5, 5), 0);
 
-        // ¶ÔimgFrame1CopyºÍimgFrame2Copy½øÐÐ²î·Ö£¬µÃµ½Á½Ö¡Í¼ÏñµÄ²îÒìÍ¼ÏñimgDifference¡£
+        // ï¿½ï¿½imgFrame1Copyï¿½ï¿½imgFrame2Copyï¿½ï¿½ï¿½Ð²ï¿½Ö£ï¿½ï¿½Ãµï¿½ï¿½ï¿½Ö¡Í¼ï¿½ï¿½Ä²ï¿½ï¿½ï¿½Í¼ï¿½ï¿½imgDifferenceï¿½ï¿½
         cv::absdiff(imgFrame1Copy, imgFrame2Copy, imgDifference);
 
-        // ¶ÔimgDifference½øÐÐãÐ(¶þ)Öµ»¯´¦Àí£¬½«´óÓÚ30µÄÏñËØÉèÎª255£¬Ð¡ÓÚµÈÓÚ30µÄÏñËØÉèÎª0£¬µÃµ½Ç°¾°ÎïÌåµÄ¶þÖµ»¯Í¼ÏñimgThresh¡£
+        // ï¿½ï¿½imgDifferenceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª255ï¿½ï¿½Ð¡ï¿½Úµï¿½ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½ï¿½Ãµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½Öµï¿½ï¿½Í¼ï¿½ï¿½imgThreshï¿½ï¿½
         cv::threshold(imgDifference, imgThresh, 30, 255.0, CV_THRESH_BINARY);
 
-        // ×îºó£¬Ê¹ÓÃcv::imshow()º¯Êý½«¶þÖµ»¯Í¼ÏñimgThreshÏÔÊ¾ÔÚÃûÎª"imgThresh"µÄ´°¿ÚÖÐ£¬ÒÔ±ã¼ì²éºÍµ÷ÊÔ¡£
+        // ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½cv::imshow()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Í¼ï¿½ï¿½imgThreshï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Îª"imgThresh"ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½Ô±ï¿½ï¿½ï¿½Íµï¿½ï¿½Ô¡ï¿½
         cv::imshow("imgThresh", imgThresh);
 
-        // forÑ­»·Ö®Ç°Õâ¶Î´úÂëÊÇÔÚ½øÐÐÐÎÌ¬Ñ§±ä»»ºÍÂÖÀªÌáÈ¡¡£
-        // ´´½¨ÁËÒ»¸ö3x3µÄ¾ØÐÎ½á¹¹ÔªËØ¡£
+        // forÑ­ï¿½ï¿½Ö®Ç°ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¬Ñ§ï¿½ä»»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½3x3ï¿½Ä¾ï¿½ï¿½Î½á¹¹Ôªï¿½Ø¡ï¿½
         cv::Mat structuringElement3x3 = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
-        // ´´½¨ÁËÒ»¸ö5x5µÄ¾ØÐÎ½á¹¹ÔªËØ¡£
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½5x5ï¿½Ä¾ï¿½ï¿½Î½á¹¹Ôªï¿½Ø¡ï¿½
         cv::Mat structuringElement5x5 = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
-        // ´´½¨ÁËÒ»¸ö7x7µÄ¾ØÐÎ½á¹¹ÔªËØ¡£
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½7x7ï¿½Ä¾ï¿½ï¿½Î½á¹¹Ôªï¿½Ø¡ï¿½
         cv::Mat structuringElement7x7 = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7));
-        // ´´½¨ÁËÒ»¸ö15x15µÄ¾ØÐÎ½á¹¹ÔªËØ¡£
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½15x15ï¿½Ä¾ï¿½ï¿½Î½á¹¹Ôªï¿½Ø¡ï¿½
         cv::Mat structuringElement15x15 = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(15, 15));
 
-        // ¶ÔimgThresh½øÐÐÐÎÌ¬Ñ§±ÕÔËËã£¬ÒÔÌî³äÇ°¾°ÎïÌåÖÐµÄ¿Õ¶´¡£
-        // Í¨¹ýforÑ­»·¶ÔimgThresh½øÐÐÅòÕÍºÍ¸¯Ê´²Ù×÷£¬¿ÉÒÔÊ¹Ä¿±êÇøÓò¸ü¼ÓÆ½»¬£¬È¥³ýÒ»Ð©²»±ØÒªµÄÏ¸½Ú¡£
+        // ï¿½ï¿½imgThreshï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¬Ñ§ï¿½ï¿½ï¿½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¿Õ¶ï¿½ï¿½ï¿½
+        // Í¨ï¿½ï¿½forÑ­ï¿½ï¿½ï¿½ï¿½imgThreshï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÍºÍ¸ï¿½Ê´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½Ò»Ð©ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ï¸ï¿½Ú¡ï¿½
         for (unsigned int i = 0; i < 2; i++) {
 
             cv::dilate(imgThresh, imgThresh, structuringElement5x5);
@@ -164,38 +164,38 @@ int main(void) {
             cv::erode(imgThresh, imgThresh, structuringElement5x5);
         }
 
-        // ¸´ÖÆimgThreshµ½imgThreshCopy£¬ÒÔ±ãÓÚÔÚÖ®ºóµÄ´¦ÀíÖÐ½øÐÐ±È½Ï¡£
+        // ï¿½ï¿½ï¿½ï¿½imgThreshï¿½ï¿½imgThreshCopyï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ð½ï¿½ï¿½Ð±È½Ï¡ï¿½
         cv::Mat imgThreshCopy = imgThresh.clone();
 
-        // ¶¨ÒåÒ»¸övectorÈÝÆ÷contours£¬ÓÃÓÚ´æ´¢ÂÖÀª¡£
+        // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½vectorï¿½ï¿½ï¿½ï¿½contoursï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         std::vector<std::vector<cv::Point> > contours;
 
-        // ´ÓimgThreshCopyÖÐ²éÕÒÂÖÀª£¬½«ÂÖÀª´æ´¢µ½contoursÖÐ¡£cv::RETR_EXTERNAL±íÊ¾Ö»²éÕÒ×îÍâ²ãÂÖÀª£¬cv::CHAIN_APPROX_SIMPLE±íÊ¾Ê¹ÓÃ¼òµ¥µÄ±Æ½ü·½·¨À´Ñ¹ËõÂÖÀª£¬´Ó¶ø¼õÉÙÂÖÀªµãÊý¡£
+        // ï¿½ï¿½imgThreshCopyï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ´¢ï¿½ï¿½contoursï¿½Ð¡ï¿½cv::RETR_EXTERNALï¿½ï¿½Ê¾Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½cv::CHAIN_APPROX_SIMPLEï¿½ï¿½Ê¾Ê¹ï¿½Ã¼òµ¥µÄ±Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         cv::findContours(imgThreshCopy, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-        // µ÷ÓÃ×Ô¶¨Òåº¯ÊýdrawAndShowContours()£¬¸Ãº¯ÊýÓÃÓÚÔÚÍ¼ÏñÉÏ»æÖÆÂÖÀª£¬²¢ÏÔÊ¾Í¼Ïñ´°¿Ú¡£
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½åº¯ï¿½ï¿½drawAndShowContours()ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Í¼ï¿½ñ´°¿Ú¡ï¿½
         drawAndShowContours(imgThresh.size(), contours, "imgContours");
 
-        // ¶¨ÒåÒ»¸övectorÈÝÆ÷convexHulls£¬ÓÃÓÚ´æ´¢Í¹°ü¡£
+        // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½vectorï¿½ï¿½ï¿½ï¿½convexHullsï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢Í¹ï¿½ï¿½ï¿½ï¿½
         std::vector<std::vector<cv::Point> > convexHulls(contours.size());
 
         /*
-        Õâ¶Î´úÂëÊÇÔÚ¶ÔÍ¹°ü½øÐÐÉ¸Ñ¡£¬½«·ûºÏÌõ¼þµÄÍ¹°ü×ª»¯Îª¿ÉÄÜµÄÔË¶¯ÎïÌåBlob£¬²¢´æ´¢µ½currentFrameBlobsÖÐ¡£
-        ÆäÖÐ£¬Í¹°üµÄÉ¸Ñ¡Ìõ¼þ°üÀ¨Ãæ»ý¡¢¿í¸ß±È¡¢¶Ô½ÇÏß³¤¶ÈºÍÂÖÀªÃæ»ý±ÈµÈ£¬¿ÉÒÔ¸ù¾Ý¾ßÌåÇé¿ö½øÐÐµ÷Õû¡£
-        ¾ßÌåÁ÷³ÌÈçÏÂ£º
-            ±éÀúËùÓÐµÄÂÖÀª£¬¶ÔÃ¿¸öÂÖÀª½øÐÐÍ¹°ü²Ù×÷£¬²¢½«Í¹°ü´æ´¢ÔÚconvexHullsÖÐ¡£
-            ½«ËùÓÐÍ¹°ü»æÖÆ³öÀ´£¬²¢ÏÔÊ¾ÔÚÃûÎª"imgConvexHulls"µÄ´°¿ÚÖÐ¡£
-            ±éÀúËùÓÐµÄÍ¹°ü£¬½«·ûºÏÌõ¼þµÄÍ¹°ü×ª»¯Îª¿ÉÄÜµÄÔË¶¯ÎïÌåBlob£¬²¢´æ´¢µ½currentFrameBlobsÖÐ¡£
-            ½«ËùÓÐ¿ÉÄÜµÄÔË¶¯ÎïÌåBlob»æÖÆ³öÀ´£¬²¢ÏÔÊ¾ÔÚÃûÎª"imgCurrentFrameBlobs"µÄ´°¿ÚÖÐ¡£
+        ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¸Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½Üµï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½æ´¢ï¿½ï¿½currentFrameBlobsï¿½Ð¡ï¿½
+        ï¿½ï¿½ï¿½Ð£ï¿½Í¹ï¿½ï¿½ï¿½ï¿½É¸Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß±È¡ï¿½ï¿½Ô½ï¿½ï¿½ß³ï¿½ï¿½Èºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÈµÈ£ï¿½ï¿½ï¿½ï¿½Ô¸ï¿½ï¿½Ý¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½
+            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½æ´¢ï¿½ï¿½convexHullsï¿½Ð¡ï¿½
+            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Îª"imgConvexHulls"ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
+            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½Üµï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½æ´¢ï¿½ï¿½currentFrameBlobsï¿½Ð¡ï¿½
+            ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½Üµï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Îª"imgCurrentFrameBlobs"ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
         */
-        for (unsigned int i = 0; i < contours.size(); i++) { // ¶ÔÓÚÍ¼ÏñÖÐµÄÃ¿¸öÂÖÀª
-            cv::convexHull(contours[i], convexHulls[i]); // Ö´ÐÐÍ¹°üËã·¨£¬µÃµ½Í¹°ü£¨convex hull£©
+        for (unsigned int i = 0; i < contours.size(); i++) { // ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ðµï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            cv::convexHull(contours[i], convexHulls[i]); // Ö´ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ã·¨ï¿½ï¿½ï¿½Ãµï¿½Í¹ï¿½ï¿½ï¿½ï¿½convex hullï¿½ï¿½
         }
 
-        drawAndShowContours(imgThresh.size(), convexHulls, "imgConvexHulls"); // ½«ËùÓÐÍ¹°ü»æÖÆ³öÀ´£¬²¢ÏÔÊ¾ÔÚÃûÎª"imgConvexHulls"µÄ´°¿ÚÖÐ¡£
+        drawAndShowContours(imgThresh.size(), convexHulls, "imgConvexHulls"); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Îª"imgConvexHulls"ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
 
-        for (auto& convexHull : convexHulls) { // ¶ÔÓÚÍ¼ÏñÖÐµÄÃ¿¸öÍ¹°ü
-            Blob possibleBlob(convexHull); // ½«Í¹°ü×ª»¯Îª¿ÉÄÜµÄÔË¶¯ÎïÌåBlobÀàÊµÀý
+        for (auto& convexHull : convexHulls) { // ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ðµï¿½Ã¿ï¿½ï¿½Í¹ï¿½ï¿½
+            Blob possibleBlob(convexHull); // ï¿½ï¿½Í¹ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½Üµï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½Êµï¿½ï¿½
 
             if (possibleBlob.currentBoundingRect.area() > 400 &&
                 possibleBlob.dblCurrentAspectRatio > 0.2 &&
@@ -204,87 +204,87 @@ int main(void) {
                 possibleBlob.currentBoundingRect.height > 30 &&
                 possibleBlob.dblCurrentDiagonalSize > 60.0 &&
                 (cv::contourArea(possibleBlob.currentContour) / (double)possibleBlob.currentBoundingRect.area()) > 0.50) {
-                currentFrameBlobs.push_back(possibleBlob); // ½«·ûºÏÌõ¼þµÄÍ¹°ü×ª»¯Îª¿ÉÄÜµÄÔË¶¯ÎïÌåBlob£¬²¢´æ´¢µ½currentFrameBlobsÖÐ
+                currentFrameBlobs.push_back(possibleBlob); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½Üµï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½æ´¢ï¿½ï¿½currentFrameBlobsï¿½ï¿½
             }
         }
 
-        drawAndShowContours(imgThresh.size(), currentFrameBlobs, "imgCurrentFrameBlobs"); // ½«ËùÓÐ¿ÉÄÜµÄÔË¶¯ÎïÌåBlob»æÖÆ³öÀ´£¬²¢ÏÔÊ¾ÔÚÃûÎª"imgCurrentFrameBlobs"µÄ´°¿ÚÖÐ¡£
+        drawAndShowContours(imgThresh.size(), currentFrameBlobs, "imgCurrentFrameBlobs"); // ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½Üµï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Îª"imgCurrentFrameBlobs"ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
 
 
         /*
-            Õâ¶Î´úÂëÊÇ¸ú×ÙÆû³µÔË¶¯µÄºËÐÄ²¿·Ö£¬ÆäÖÐµÄifÌõ¼þÅÐ¶ÏÊÇÓÃÀ´ÅÐ¶Ïµ±Ç°ÊÇ·ñÎªÊÓÆµÁ÷µÄµÚÒ»Ö¡¡£
-            Èç¹ûÊÇ£¬Ôò½«currentFrameBlobsÖÐµÄËùÓÐBlob¶ÔÏóÈ«²¿Ìí¼Óµ½blobsÖÐ£¬
-            Èç¹û²»ÊÇ£¬Ôò½«currentFrameBlobsÖÐµÄBlob¶ÔÏóÓëblobsÖÐÒÑÓÐµÄBlob¶ÔÏó½øÐÐÆ¥Åä¡£
-                ½ÓÏÂÀ´µÄÒ»ÏµÁÐ²Ù×÷°üÀ¨»æÖÆÂÖÀª¡¢»æÖÆBlobÐÅÏ¢¡¢¼ì²éBlobÊÇ·ñ´©¹ýÁËÒ»¸öË®Æ½µÄÏß¡¢ÔÚÍ¼ÏñÉÏ»æÖÆ³µµÄÊýÁ¿ÒÔ¼°ÏÔÊ¾Êä³öÍ¼Ïñ¡£
-                ¾ßÌåÀ´Ëµ£¬drawAndShowContours()º¯ÊýÓÃÓÚÔÚÍ¼ÏñÉÏ»æÖÆÂÖÀª£¬Ëü½ÓÊÜÍ¼Ïñ´óÐ¡¡¢ÂÖÀªºÍÏÔÊ¾µÄ´°¿ÚÃû³Æ×÷Îª²ÎÊý¡£
-                drawBlobInfoOnImage()º¯ÊýÓÃÓÚÔÚÍ¼ÏñÉÏ»æÖÆBlobµÄÐÅÏ¢£¬ÀýÈçID¡¢ÖÐÐÄÎ»ÖÃ¡¢Íâ½Ó¾ØÐÎµÈ¡£
-                checkIfBlobsCrossedTheLine()º¯ÊýÓÃÓÚ¼ì²éBlobÊÇ·ñ´©¹ýÁËÔ¤ÉèµÄË®Æ½Ïß£¬Ëü½ÓÊÜ°üº¬ËùÓÐBlobµÄvector¡¢Ë®Æ½ÏßÎ»ÖÃºÍµ±Ç°¼ì²âµ½µÄ³µÁ¾ÊýÁ¿×÷Îª²ÎÊý¡£
-                // drawCarCountOnImage()º¯ÊýÓÃÓÚÔÚÍ¼ÏñÉÏ»æÖÆµ±Ç°¼ì²âµ½µÄ³µÁ¾ÊýÁ¿¡£
-                ×îºó£¬imshow()º¯ÊýÓÃÓÚÏÔÊ¾Êä³öÍ¼Ïñ¡£
-                ÏÂÃæÊÇÃ¿ÐÐ´úÂë¾ßÌå×¢ÊÍ¡£
+            ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½ï¿½Äºï¿½ï¿½Ä²ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½Ðµï¿½ifï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ïµï¿½Ç°ï¿½Ç·ï¿½Îªï¿½ï¿½Æµï¿½ï¿½ï¿½Äµï¿½Ò»Ö¡ï¿½ï¿½
+            ï¿½ï¿½ï¿½ï¿½Ç£ï¿½ï¿½ï¿½currentFrameBlobsï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½blobsï¿½Ð£ï¿½
+            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½ï¿½ï¿½currentFrameBlobsï¿½Ðµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½blobsï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ä¡£
+                ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ïµï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½Ç·ñ´©¹ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ë®Æ½ï¿½ï¿½ï¿½ß¡ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
+                ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½drawAndShowContours()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                drawBlobInfoOnImage()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã¡ï¿½ï¿½ï¿½Ó¾ï¿½ï¿½ÎµÈ¡ï¿½
+                checkIfBlobsCrossedTheLine()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½Blobï¿½Ç·ñ´©¹ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½Ë®Æ½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½vectorï¿½ï¿½Ë®Æ½ï¿½ï¿½Î»ï¿½ÃºÍµï¿½Ç°ï¿½ï¿½âµ½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                // drawCarCountOnImage()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½Æµï¿½Ç°ï¿½ï¿½âµ½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                ï¿½ï¿½ï¿½imshow()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
+                ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½Í¡ï¿½
         */
-        // Õâ¶Î´úÂëÊÇÔÚ¶Ôµ±Ç°Ö¡ÖÐµÄBlob½øÐÐÆ¥Åä£¬½«Æ¥Åä³É¹¦µÄBlob´æ´¢µ½blobsÖÐ¡£
-        if (blnFirstFrame == true) { // Èç¹ûÊÇµÚÒ»Ö¡£¬Ôò½«µ±Ç°Ö¡ÖÐµÄBlob´æ´¢µ½blobsÖÐ¡£
-            for (auto& currentFrameBlob : currentFrameBlobs) { // ±éÀúµ±Ç°Ö¡ÖÐµÄËùÓÐ Blob
-                // ½«µ±Ç°Ö¡ÖÐµÄBlob´æ´¢µ½blobsÖÐ¡£
+        // ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶Ôµï¿½Ç°Ö¡ï¿½Ðµï¿½Blobï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ä£¬ï¿½ï¿½Æ¥ï¿½ï¿½É¹ï¿½ï¿½ï¿½Blobï¿½æ´¢ï¿½ï¿½blobsï¿½Ð¡ï¿½
+        if (blnFirstFrame == true) { // ï¿½ï¿½ï¿½ï¿½Çµï¿½Ò»Ö¡ï¿½ï¿½ï¿½ò½«µï¿½Ç°Ö¡ï¿½Ðµï¿½Blobï¿½æ´¢ï¿½ï¿½blobsï¿½Ð¡ï¿½
+            for (auto& currentFrameBlob : currentFrameBlobs) { // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ Blob
+                // ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½Ðµï¿½Blobï¿½æ´¢ï¿½ï¿½blobsï¿½Ð¡ï¿½
                 blobs.push_back(currentFrameBlob);
             }
         }
         else {
-            // Èç¹û²»ÊÇµÚÒ»Ö¡£¬Ôòµ÷ÓÃmatchCurrentFrameBlobsToExistingBlobs()º¯Êý£¬½«µ±Ç°Ö¡µÄ Blob ÓëÖ®Ç°µÄ Blob ½øÐÐÆ¥Åä
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½Ò»Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½matchCurrentFrameBlobsToExistingBlobs()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½ Blob ï¿½ï¿½Ö®Ç°ï¿½ï¿½ Blob ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½
             matchCurrentFrameBlobsToExistingBlobs(blobs, currentFrameBlobs);
         }
 
-        // µ÷ÓÃ×Ô¶¨Òåº¯ÊýdrawAndShowContours()£¬¸Ãº¯ÊýÓÃÓÚÔÚÍ¼ÏñÉÏ»æÖÆBlob£¬²¢ÏÔÊ¾ËùÓÐ Blob µÄÂÖÀªÔÚÍ¼Ïñ´°¿ÚÉÏ¡£
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½åº¯ï¿½ï¿½drawAndShowContours()ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ Blob ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ñ´°¿ï¿½ï¿½Ï¡ï¿½
         drawAndShowContours(imgThresh.size(), blobs, "imgBlobs");
 
-        // »ñÈ¡ frame2 µÄÁíÒ»·Ý¸±±¾£¬ÒòÎªÉÏÃæµÄ´¦ÀíÒÑ¾­¸Ä±äÁËÇ°Ò»¸öµÚ2Ö¡µÄ¸±±¾
+        // ï¿½ï¿½È¡ frame2 ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Ý¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½Ä±ï¿½ï¿½ï¿½Ç°Ò»ï¿½ï¿½ï¿½ï¿½2Ö¡ï¿½Ä¸ï¿½ï¿½ï¿½
         imgFrame2Copy = imgFrame2.clone();
 
-        // ÔÚÍ¼ÏñÉÏ»æÖÆ Blob µÄÐÅÏ¢
+        // ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ Blob ï¿½ï¿½ï¿½ï¿½Ï¢
         drawBlobInfoOnImage(blobs, imgFrame2Copy);
 
-        // ¼ì²éÊÇ·ñÓÐ Blob ¿çÔ½ÁËÔ¤ÉèµÄË®Æ½Ïß
+        // ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ Blob ï¿½ï¿½Ô½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½Ë®Æ½ï¿½ï¿½
         bool blnAtLeastOneBlobCrossedTheLine = checkIfBlobsCrossedTheLine(blobs, intHorizontalLinePosition, carCount);
 
-        if (blnAtLeastOneBlobCrossedTheLine == true) { // Èç¹ûÖÁÉÙÓÐÒ»¸ö Blob ¿çÔ½ÁËÏß
-            cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_GREEN, 2); // ÔÚÍ¼ÏñÉÏ»æÖÆÂÌÉ«µÄ¿çÏß£¬ÕâÀïËÙ¶ÈºÜ¿ìÂÌÉ«É¾Ò»ÏÂ¾Í¹ýÁË¡£
+        if (blnAtLeastOneBlobCrossedTheLine == true) { // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Blob ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½
+            cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_GREEN, 2); // ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½Ä¿ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ÈºÜ¿ï¿½ï¿½ï¿½É«É¾Ò»ï¿½Â¾Í¹ï¿½ï¿½Ë¡ï¿½
         }
         else {
-            cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_RED, 2); // ÔÚÍ¼ÏñÉÏ»æÖÆºìÉ«µÄ¿çÏß£¬ËùÒÔÒ»Ö±Ã»ÓÐBlob¿çÔ½Ä¬ÈÏ¾ÍÎªºìÉ«µÄ¿çÏß¡£
+            cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_RED, 2); // ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½Æºï¿½É«ï¿½Ä¿ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ö±Ã»ï¿½ï¿½Blobï¿½ï¿½Ô½Ä¬ï¿½Ï¾ï¿½Îªï¿½ï¿½É«ï¿½Ä¿ï¿½ï¿½ß¡ï¿½
         }
 
-        // ÔÚÍ¼ÏñÉÏ»æÖÆÆû³µ¼ÆÊý
+        // ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         drawCarCountOnImage(carCount, imgFrame2Copy);
 
-        // Êä³öÏÔÊ¾Í¼Ïñ¸±±¾
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Í¼ï¿½ñ¸±±ï¿½
         cv::imshow("imgFrame2Copy", imgFrame2Copy);
 
-        //cv::waitKey(0);                 // È¡Ïû×¢ÊÍ´ËÐÐÒÔ½øÐÐÖðÖ¡µ÷ÊÔ
+        //cv::waitKey(0);                 // È¡ï¿½ï¿½×¢ï¿½Í´ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½
 
-        // ÏÖÔÚÎÒÃÇÎªÏÂÒ»´Îµü´ú×ö×¼±¸
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ò»ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½×¼ï¿½ï¿½
 
-        currentFrameBlobs.clear(); // Çå¿Õµ±Ç°Ö¡ÖÐµÄ Blob(ÈÝÆ÷)ÒòÎªÎÒÃÇÒÑ¾­´¦ÀíÁËËüÃÇÁË
+        currentFrameBlobs.clear(); // ï¿½ï¿½Õµï¿½Ç°Ö¡ï¿½Ðµï¿½ Blob(ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        imgFrame1 = imgFrame2.clone();           // ½«Ö¡ 1 ÒÆ¶¯µ½Ö¡ 2 µÄÎ»ÖÃ
+        imgFrame1 = imgFrame2.clone();           // ï¿½ï¿½Ö¡ 1 ï¿½Æ¶ï¿½ï¿½ï¿½Ö¡ 2 ï¿½ï¿½Î»ï¿½ï¿½
 
-        if ((capVideo.get(CV_CAP_PROP_POS_FRAMES) + 1) < capVideo.get(CV_CAP_PROP_FRAME_COUNT)) { // Èç¹ûÊÓÆµÖÐ»¹ÓÐÖ¡,Ò²¾ÍÊÇÈç¹ûµ±Ç°Ö¡²»ÊÇ×îºóÒ»Ö¡
-            capVideo.read(imgFrame2); // ¶ÁÈ¡ÏÂÒ»Ö¡
+        if ((capVideo.get(CV_CAP_PROP_POS_FRAMES) + 1) < capVideo.get(CV_CAP_PROP_FRAME_COUNT)) { // ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Ð»ï¿½ï¿½ï¿½Ö¡,Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ö¡
+            capVideo.read(imgFrame2); // ï¿½ï¿½È¡ï¿½ï¿½Ò»Ö¡
         }
         else {
-            std::cout << "end of video\n"; // Èç¹ûµ±Ç°Ö¡ÊÇ×îºóÒ»Ö¡£¬ÊÓÆµ½áÊø£¬Êä³ö¡°end of video¡±£¬
-            break; // Ìø³öÑ­»·
+            std::cout << "end of video\n"; // ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ö¡ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½end of videoï¿½ï¿½ï¿½ï¿½
+            break; // ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½
         }
 
-        blnFirstFrame = false; // ÏÖÔÚÎÒÃÇÒÑ¾­´¦ÀíÁËµÚÒ»Ö¡£¬ËùÒÔÎÒÃÇ¿ÉÒÔÉèÖÃ blnFirstFrame = false
-        frameCount++; // Ö¡¼ÆÊýÆ÷×ÔÔö
-        chCheckForEscKey = cv::waitKey(1); // µÈ´ý 1 ºÁÃë£¬¼ì²éÊÇ·ñÓÐ ESC ¼ü°´ÏÂ
+        blnFirstFrame = false; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½Ò»Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ blnFirstFrame = false
+        frameCount++; // Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        chCheckForEscKey = cv::waitKey(1); // ï¿½È´ï¿½ 1 ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ ESC ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
-    if (chCheckForEscKey != 27) {               // Èç¹ûÓÃ»§Ã»ÓÐ°´ÏÂ ESC ¼ü£¨¼´ÎÒÃÇµ½´ïÁËÊÓÆµµÄ½áÎ²£©
-        cv::waitKey(0);                         // ±£³Ö´°¿Ú´ò¿ª£¬ÒÔ±ã¡°end of video¡±ÏûÏ¢ÄÜ¹»ÏÔÊ¾
+    if (chCheckForEscKey != 27) {               // ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ã»ï¿½Ð°ï¿½ï¿½ï¿½ ESC ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä½ï¿½Î²ï¿½ï¿½
+        cv::waitKey(0);                         // ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ú´ò¿ª£ï¿½ï¿½Ô±ã¡°end of videoï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ü¹ï¿½ï¿½ï¿½Ê¾
     }
-    // Çë×¢Òâ£¬Èç¹ûÓÃ»§°´ÏÂ ESC ¼ü£¬ÎÒÃÇ²»ÐèÒª±£³Ö´°¿Ú´ò¿ª£¬ÎÒÃÇ¿ÉÒÔÈÃ³ÌÐò½áÊø£¬´Ó¶ø¹Ø±Õ´°¿Ú
+    // ï¿½ï¿½×¢ï¿½â£¬ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ ESC ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ú´ò¿ª£ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½Ø±Õ´ï¿½ï¿½ï¿½
 
 
     return(0);
@@ -292,55 +292,55 @@ int main(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-Õâ¸öº¯ÊýµÄ×÷ÓÃÊÇ½«µ±Ç°Ö¡µÄBlobÓëÒÑ´æÔÚµÄBlob½øÐÐÆ¥Åä£¬¸üÐÂÒÑ´æÔÚµÄBlobµÄÐÅÏ¢£¬Èç¹ûµ±Ç°Ö¡ÖÐµÄBlobÃ»ÓÐÆ¥Åäµ½ÒÑ´æÔÚµÄBlob£¬Ôò½«ÆäÊÓÎªÐÂµÄBlob²¢Ìí¼Óµ½ÒÑ´æÔÚµÄBlobÁÐ±íÖÐ¡£¾ßÌåµÄÊµÏÖ·½Ê½ÈçÏÂ£º
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½Blobï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½Ðµï¿½BlobÃ»ï¿½ï¿½Æ¥ï¿½äµ½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Âµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½Ð±ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½Ö·ï¿½Ê½ï¿½ï¿½ï¿½Â£ï¿½
 
-¶ÔÓÚÃ¿Ò»¸öÒÑ´æÔÚµÄBlob£¬Ê×ÏÈ½«Æä±ê¼ÇÎªÃ»ÓÐÆ¥Åäµ½»òÕßÊÇÐÂµÄBlob£¬È»ºó¸ù¾ÝÀúÊ·¹ì¼£Ô¤²âÆäÏÂÒ»Ö¡³öÏÖµÄÎ»ÖÃ¡£
+ï¿½ï¿½ï¿½ï¿½Ã¿Ò»ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½È½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÃ»ï¿½ï¿½Æ¥ï¿½äµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Blobï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê·ï¿½ì¼£Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ö¡ï¿½ï¿½ï¿½Öµï¿½Î»ï¿½Ã¡ï¿½
 
-¶ÔÓÚµ±Ç°Ö¡ÖÐµÄÃ¿Ò»¸öBlob£¬±éÀúÒÑ´æÔÚµÄBlobÁÐ±í£¬ÕÒµ½ÓëÖ®¾àÀë×î½üµÄÒÑ´æÔÚµÄBlob£¬ÈôÆä¾àÀëÐ¡ÓÚµ±Ç°BlobµÄ¶Ô½ÇÏß³¤¶ÈµÄÒ»°ë£¬Ôò½«µ±Ç°BlobÓëÒÑ´æÔÚµÄBlob½øÐÐÆ¥Åä£»·ñÔò£¬½«µ±Ç°BlobÊÓÎªÐÂµÄBlob¡£
+ï¿½ï¿½ï¿½Úµï¿½Ç°Ö¡ï¿½Ðµï¿½Ã¿Ò»ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½Ð±ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½Úµï¿½Ç°Blobï¿½Ä¶Ô½ï¿½ï¿½ß³ï¿½ï¿½Èµï¿½Ò»ï¿½ë£¬ï¿½ò½«µï¿½Ç°Blobï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ä£»ï¿½ï¿½ï¿½ò£¬½ï¿½ï¿½ï¿½Ç°Blobï¿½ï¿½Îªï¿½Âµï¿½Blobï¿½ï¿½
 
-±éÀúÒÑ´æÔÚµÄBlobÁÐ±í£¬½«Ã»ÓÐÆ¥Åäµ½µÄBlobµÄÁ¬ÐøÎ´Æ¥ÅäÖ¡Êý¼Ó1£¬Èç¹ûÒÑ¾­Á¬ÐøÎ´Æ¥ÅäÁË5Ö¡£¬Ôò½«Æä´ÓÒÑ´æÔÚµÄBlobÁÐ±íÖÐÒÆ³ý¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Æ¥ï¿½äµ½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´Æ¥ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½Î´Æ¥ï¿½ï¿½ï¿½ï¿½5Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½Ð±ï¿½ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½
 
-º¯ÊýÖÐÓÃµ½µÄÒ»Ð©±äÁ¿£º
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½Ò»Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-existingBlobs£ºÒÑ´æÔÚµÄBlobÁÐ±í£»
-currentFrameBlobs£ºµ±Ç°Ö¡ÖÐµÄBlobÁÐ±í£»
-intIndexOfLeastDistance£º¾àÀëµ±Ç°Blob×î½üµÄÒÑ´æÔÚµÄBlobµÄË÷Òý£»
-dblLeastDistance£º¾àÀëµ±Ç°Blob×î½üµÄÒÑ´æÔÚµÄBlobµÄ¾àÀë£»
-distanceBetweenPoints£º¼ÆËãÁ½µã¼ä¾àÀëµÄº¯Êý¡£
+existingBlobsï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½Ð±ï¿½ï¿½ï¿½
+currentFrameBlobsï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½Ðµï¿½Blobï¿½Ð±ï¿½ï¿½ï¿½
+intIndexOfLeastDistanceï¿½ï¿½ï¿½ï¿½ï¿½ëµ±Ç°Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+dblLeastDistanceï¿½ï¿½ï¿½ï¿½ï¿½ëµ±Ç°Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½Blobï¿½Ä¾ï¿½ï¿½ë£»
+distanceBetweenPointsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½
 
-std::vector<Blob>& existingBlobs£ºÒÑ¾­±»¸ú×ÙµÄ Blob µÄ¼¯ºÏ
-std::vector<Blob>& currentFrameBlobs£ºµ±Ç°Ö¡ÖÐµÄ Blob µÄ¼¯ºÏ
+std::vector<Blob>& existingBlobsï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ùµï¿½ Blob ï¿½Ä¼ï¿½ï¿½ï¿½
+std::vector<Blob>& currentFrameBlobsï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½Ðµï¿½ Blob ï¿½Ä¼ï¿½ï¿½ï¿½
 
 
 */
 void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs, std::vector<Blob>& currentFrameBlobs) {
 
-    // ¶ÔÓÚÃ¿Ò»¸öÒÑ¾­±»¸ú×ÙµÄ Blob
+    // ï¿½ï¿½ï¿½ï¿½Ã¿Ò»ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ùµï¿½ Blob
     for (auto& existingBlob : existingBlobs) {
 
-        // ÉèÖÃµ±Ç°Ã»ÓÐÕÒµ½Æ¥ÅäµÄ±êÖ¾Îª false
+        // ï¿½ï¿½ï¿½Ãµï¿½Ç°Ã»ï¿½ï¿½ï¿½Òµï¿½Æ¥ï¿½ï¿½Ä±ï¿½Ö¾Îª false
         existingBlob.blnCurrentMatchFoundOrNewBlob = false;
 
-        // Ô¤²âÏÂÒ»¸öÎ»ÖÃ
+        // Ô¤ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½ï¿½
         existingBlob.predictNextPosition();
     }
 
-    // ¶ÔÓÚÃ¿Ò»¸öµ±Ç°Ö¡ÖÐµÄ Blob
+    // ï¿½ï¿½ï¿½ï¿½Ã¿Ò»ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½Ðµï¿½ Blob
     for (auto& currentFrameBlob : currentFrameBlobs) {
 
-        // ÕÒµ½¾àÀëµ±Ç° Blob ×î½üµÄÒÑ¾­±»¸ú×ÙµÄ Blob µÄË÷Òý
+        // ï¿½Òµï¿½ï¿½ï¿½ï¿½ëµ±Ç° Blob ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ùµï¿½ Blob ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         int intIndexOfLeastDistance = 0;
         double dblLeastDistance = 100000.0;
 
         for (unsigned int i = 0; i < existingBlobs.size(); i++) {
 
-            // Èç¹û Blob »¹ÔÚ¸ú×ÙÖÐ
+            // ï¿½ï¿½ï¿½ Blob ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½
             if (existingBlobs[i].blnStillBeingTracked == true) {
 
-                // ¼ÆËãµ±Ç° Blob ºÍÒÑ¾­±»¸ú×ÙµÄ Blob Ö®¼äµÄ¾àÀë
+                // ï¿½ï¿½ï¿½ãµ±Ç° Blob ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ùµï¿½ Blob Ö®ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½
                 double dblDistance = distanceBetweenPoints(currentFrameBlob.centerPositions.back(), existingBlobs[i].predictedNextPosition);
 
-                // Èç¹û¾àÀë±ÈÖ®Ç°¼ÆËãµÄ¾àÀë»¹ÒªÐ¡£¬Ôò¸üÐÂ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ë»¹ÒªÐ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (dblDistance < dblLeastDistance) {
                     dblLeastDistance = dblDistance;
                     intIndexOfLeastDistance = i;
@@ -348,26 +348,26 @@ void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs, std
             }
         }
 
-        // Èç¹û×îÐ¡¾àÀëÐ¡ÓÚµ±Ç° Blob µÄ¶Ô½ÇÏßµÄ 50%£¬Ôò½«ÆäÌí¼Óµ½ÒÑ¾­´æÔÚµÄ Blob ÖÐ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½Úµï¿½Ç° Blob ï¿½Ä¶Ô½ï¿½ï¿½ßµï¿½ 50%ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Úµï¿½ Blob ï¿½ï¿½
         if (dblLeastDistance < currentFrameBlob.dblCurrentDiagonalSize * 0.5) {
             addBlobToExistingBlobs(currentFrameBlob, existingBlobs, intIndexOfLeastDistance);
         }
-        // Èç¹û×îÐ¡¾àÀë´óÓÚµ±Ç° Blob µÄ¶Ô½ÇÏßµÄ 50%£¬Ôò½«ÆäÌí¼ÓÎªÒ»¸öÐÂµÄ Blob
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½Ç° Blob ï¿½Ä¶Ô½ï¿½ï¿½ßµï¿½ 50%ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÒ»ï¿½ï¿½ï¿½Âµï¿½ Blob
         else {
             addNewBlob(currentFrameBlob, existingBlobs);
         }
 
     }
 
-    // ¶ÔÓÚÃ¿Ò»¸öÒÑ¾­±»¸ú×ÙµÄ Blob
+    // ï¿½ï¿½ï¿½ï¿½Ã¿Ò»ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ùµï¿½ Blob
     for (auto& existingBlob : existingBlobs) {
 
-        // Èç¹ûµ±Ç°Ã»ÓÐÕÒµ½Æ¥ÅäµÄ Blob£¬ÔòÔö¼ÓÎ´Æ¥ÅäÖ¡µÄ¼ÆÊýÆ÷
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ã»ï¿½ï¿½ï¿½Òµï¿½Æ¥ï¿½ï¿½ï¿½ Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´Æ¥ï¿½ï¿½Ö¡ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
         if (existingBlob.blnCurrentMatchFoundOrNewBlob == false) {
             existingBlob.intNumOfConsecutiveFramesWithoutAMatch++;
         }
 
-        // Èç¹ûÎ´Æ¥ÅäµÄÖ¡µÄÊýÁ¿³¬¹ýÁË 5 Ö¡£¬ÔòÍ£Ö¹¸ú×Ù¸Ã Blob
+        // ï¿½ï¿½ï¿½Î´Æ¥ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 5 Ö¡ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½Ù¸ï¿½ Blob
         if (existingBlob.intNumOfConsecutiveFramesWithoutAMatch >= 5) {
             existingBlob.blnStillBeingTracked = false;
         }
@@ -379,22 +379,22 @@ void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs, std
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-Blob& currentFrameBlob£º´«Èëµ±Ç°Ö¡¼ì²âµ½µÄBlob¶ÔÏó¡£
-std::vector<Blob>& existingBlobs£º´«Èë´æ´¢Ô­ÓÐBlob¶ÔÏóµÄvectorÈÝÆ÷¡£
-int& intIndex£º´«ÈëÖ¸ÏòÔ­ÓÐBlobµÄË÷ÒýÖµ¡£
+Blob& currentFrameBlobï¿½ï¿½ï¿½ï¿½ï¿½ëµ±Ç°Ö¡ï¿½ï¿½âµ½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½
+std::vector<Blob>& existingBlobsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ´¢Ô­ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½vectorï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+int& intIndexï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Ô­ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½
 
-¸Ãº¯ÊýµÄ×÷ÓÃÊÇ½«µ±Ç°Ö¡¼ì²âµ½µÄBlob¶ÔÏóµÄÐÅÏ¢Ìí¼Óµ½Ô­ÓÐµÄBlob¶ÔÏóÖÐ£¬´Ó¶ø¸üÐÂBlob¶ÔÏó¡£
-ÆäÖÐ£¬Ô­ÓÐµÄBlob¶ÔÏóÊÇÍ¨¹ýÇ°Ò»Ö¡µÃµ½µÄ£¬¶øµ±Ç°Ö¡¼ì²âµ½µÄBlob¶ÔÏó¿ÉÄÜÓëÇ°Ò»Ö¡µÄÄ³¸öBlob¶ÔÏóÆ¥Åä£¬
-Ò²¿ÉÄÜÊÇÐÂ³öÏÖµÄ¡£Í¨¹ýintIndexË÷ÒýÖµµÄÅÐ¶Ï£¬¿ÉÒÔ½«µ±Ç°Ö¡µÄBlob¶ÔÏóÓëÔ­ÓÐµÄBlob¶ÔÏóÆ¥ÅäÆðÀ´£¬¸üÐÂÔ­ÓÐµÄBlob¶ÔÏóµÄÏà¹ØÐÅÏ¢¡£
+ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½âµ½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Óµï¿½Ô­ï¿½Ðµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½Ð£ï¿½Ô­ï¿½Ðµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½Ç°Ò»Ö¡ï¿½Ãµï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½âµ½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ò»Ö¡ï¿½ï¿½Ä³ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ä£¬
+Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â³ï¿½ï¿½ÖµÄ¡ï¿½Í¨ï¿½ï¿½intIndexï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Ð¶Ï£ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½Ðµï¿½Blobï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½Ðµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½
 
-Õâ¸öº¯ÊýµÄ×÷ÓÃÊÇ½«µ±Ç°Ö¡ÖÐ¼ì²âµ½µÄblobÓëÒÑ´æÔÚµÄblob½øÐÐÆ¥Åä£¬
-²¢¸üÐÂÒÑ´æÔÚµÄblobµÄÏà¹ØÊôÐÔ¡£º¯ÊýµÄÊäÈë²ÎÊý°üÀ¨µ±Ç°Ö¡µÄblob¡¢
-ÒÑ´æÔÚµÄblobÏòÁ¿ºÍÒ»¸öintÀàÐÍµÄ±äÁ¿intIndex£¬
-¸Ã±äÁ¿¼ÇÂ¼ÁËµ±Ç°blobÔÚÒÑ´æÔÚµÄblobÏòÁ¿ÖÐµÄË÷Òý¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½Ð¼ï¿½âµ½ï¿½ï¿½blobï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½blobï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ä£¬
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½blobï¿½ï¿½
+ï¿½Ñ´ï¿½ï¿½Úµï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½intï¿½ï¿½ï¿½ÍµÄ±ï¿½ï¿½ï¿½intIndexï¿½ï¿½
+ï¿½Ã±ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ëµï¿½Ç°blobï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-¾ßÌåÀ´Ëµ£¬º¯Êý½«µ±Ç°Ö¡µÄblobµÄÂÖÀªºÍÍâ½Ó¾ØÐÎ¸³Öµ¸øÒÑ´æÔÚµÄblobÏòÁ¿ÖÐÏàÓ¦µÄblob£¬
-Í¬Ê±½«µ±Ç°blobµÄÖÐÐÄÎ»ÖÃ¡¢¶Ô½ÇÏß³¤¶È¡¢³¤¿í±ÈµÈÊôÐÔ¸üÐÂµ½ÒÑ´æÔÚµÄblobÖÐ¡£
-×îºó£¬º¯Êý½«¸ÃblobµÄblnStillBeingTrackedÊôÐÔºÍblnCurrentMatchFoundOrNewBlobÊôÐÔ¶¼ÉèÖÃÎªtrue£¬±íÊ¾¸ÃblobÔÚµ±Ç°Ö¡ÖÐ±»³É¹¦Æ¥Åä¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¾ï¿½ï¿½Î¸ï¿½Öµï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½blobï¿½ï¿½
+Í¬Ê±ï¿½ï¿½ï¿½ï¿½Ç°blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã¡ï¿½ï¿½Ô½ï¿½ï¿½ß³ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½ï¿½Ô¸ï¿½ï¿½Âµï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½blobï¿½Ð¡ï¿½
+ï¿½ï¿½ó£¬ºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½blobï¿½ï¿½blnStillBeingTrackedï¿½ï¿½ï¿½Ôºï¿½blnCurrentMatchFoundOrNewBlobï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½Îªtrueï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½blobï¿½Úµï¿½Ç°Ö¡ï¿½Ð±ï¿½ï¿½É¹ï¿½Æ¥ï¿½ä¡£
 
 
 
@@ -403,18 +403,18 @@ int& intIndex£º´«ÈëÖ¸ÏòÔ­ÓÐBlobµÄË÷ÒýÖµ¡£
 
 void addBlobToExistingBlobs(Blob& currentFrameBlob, std::vector<Blob>& existingBlobs, int& intIndex) {
 
-    // ½«µ±Ç°Ö¡µÄÂÖÀªºÍÂÖÀªÍâ½Ó¾ØÐÎ¸³Öµ¸øÔ­ÓÐµÄBlob
+    // ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¾ï¿½ï¿½Î¸ï¿½Öµï¿½ï¿½Ô­ï¿½Ðµï¿½Blob
     existingBlobs[intIndex].currentContour = currentFrameBlob.currentContour;
     existingBlobs[intIndex].currentBoundingRect = currentFrameBlob.currentBoundingRect;
 
-    // ½«µ±Ç°Ö¡µÄÖÐÐÄµã×ø±ê¼ÓÈëÔ­ÓÐµÄBlobÖÐÐÄµã×ø±êÁÐ±í
+    // ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½Ðµï¿½Blobï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
     existingBlobs[intIndex].centerPositions.push_back(currentFrameBlob.centerPositions.back());
 
-    // ½«µ±Ç°Ö¡µÄ¶Ô½ÇÏß³¤¶ÈºÍ³¤¿í±È¸³Öµ¸øÔ­ÓÐµÄBlob
+    // ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½Ä¶Ô½ï¿½ï¿½ß³ï¿½ï¿½ÈºÍ³ï¿½ï¿½ï¿½ï¿½È¸ï¿½Öµï¿½ï¿½Ô­ï¿½Ðµï¿½Blob
     existingBlobs[intIndex].dblCurrentDiagonalSize = currentFrameBlob.dblCurrentDiagonalSize;
     existingBlobs[intIndex].dblCurrentAspectRatio = currentFrameBlob.dblCurrentAspectRatio;
 
-    // ½«Ô­ÓÐµÄBlobµÄ¸ú×Ù×´Ì¬ºÍÆ¥Åä×´Ì¬ÉèÖÃÎªtrue
+    // ï¿½ï¿½Ô­ï¿½Ðµï¿½Blobï¿½Ä¸ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½Æ¥ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½Îªtrue
     existingBlobs[intIndex].blnStillBeingTracked = true;
     existingBlobs[intIndex].blnCurrentMatchFoundOrNewBlob = true;
 }
@@ -426,144 +426,144 @@ void addBlobToExistingBlobs(Blob& currentFrameBlob, std::vector<Blob>& existingB
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-Õâ¸öº¯ÊýµÄ×÷ÓÃÊÇ½«Ò»¸öÐÂµÄ Blob ¶ÔÏóÌí¼Óµ½ÒÑ¾­´æÔÚµÄ Blob ÏòÁ¿ÖÐ¡£
-¸Ãº¯Êý½ÓÊÜÁ½¸ö²ÎÊý£ºµ±Ç°Ö¡ÖÐµÄ Blob ¶ÔÏóºÍÒÑ¾­´æÔÚµÄ Blob ÏòÁ¿¡£
-ÔÚº¯ÊýÄÚ²¿£¬½«±ê¼Çµ±Ç° Blob ÒÑ¾­Æ¥Åä£¬²¢½«ÆäÌí¼Óµ½ÏÖÓÐ Blob ÏòÁ¿ÖÐ¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½ Blob ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Úµï¿½ Blob ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
+ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½Ðµï¿½ Blob ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Úµï¿½ Blob ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½Úºï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½Ç° Blob ï¿½Ñ¾ï¿½Æ¥ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ Blob ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
 */
 void addNewBlob(Blob& currentFrameBlob, std::vector<Blob>& existingBlobs) {
-    // ½«µ±Ç°Ö¡µÄblob±ê¼ÇÎªÆ¥Åäµ½µÄ
+    // ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½blobï¿½ï¿½ï¿½ÎªÆ¥ï¿½äµ½ï¿½ï¿½
     currentFrameBlob.blnCurrentMatchFoundOrNewBlob = true;
-    // ½«µ±Ç°Ö¡µÄblobÌí¼Óµ½ÒÑ´æÔÚµÄblobÁÐ±íÖÐ
+    // ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½blobï¿½ï¿½ï¿½Óµï¿½ï¿½Ñ´ï¿½ï¿½Úµï¿½blobï¿½Ð±ï¿½ï¿½ï¿½
     existingBlobs.push_back(currentFrameBlob);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-Õâ¸öº¯ÊýµÄ×÷ÓÃÊÇ¼ÆËãÁ½¸ö¶þÎ¬×ø±êµãÖ®¼äµÄÅ·¼¸ÀïµÃ¾àÀë£¬·µ»Ø¾àÀëÖµ¡£
-ÔÚÕâ¸öº¯ÊýÖÐ£¬Í¨¹ý¼ÆËãµã1ºÍµã2ÔÚË®Æ½ºÍ´¹Ö±·½ÏòÉÏµÄ¾àÀë²î£¬È»ºóÊ¹ÓÃ¹´¹É¶¨Àí¼ÆËã¾àÀë¡£
-ÆäÖÐ£¬abs()º¯ÊýÓÃÓÚ»ñÈ¡¾ø¶ÔÖµ£¬pow()º¯ÊýÓÃÓÚ¼ÆËãÖ¸¶¨Êý×ÖµÄÃÝ£¬
-sqrt()º¯ÊýÓÃÓÚ»ñÈ¡Æ½·½¸ù¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¬ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½Å·ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½Öµï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½Íµï¿½2ï¿½ï¿½Ë®Æ½ï¿½Í´ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄ¾ï¿½ï¿½ï¿½î£¬È»ï¿½ï¿½Ê¹ï¿½Ã¹ï¿½ï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¡£
+ï¿½ï¿½ï¿½Ð£ï¿½abs()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½È¡ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½pow()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ý£ï¿½
+sqrt()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½È¡Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 */
 double distanceBetweenPoints(cv::Point point1, cv::Point point2) {
 
-    int intX = abs(point1.x - point2.x);  // ¼ÆËãx×ø±êÖ®²îµÄ¾ø¶ÔÖµ
-    int intY = abs(point1.y - point2.y);  // ¼ÆËãy×ø±êÖ®²îµÄ¾ø¶ÔÖµ
+    int intX = abs(point1.x - point2.x);  // ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Öµ
+    int intY = abs(point1.y - point2.y);  // ï¿½ï¿½ï¿½ï¿½yï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Öµ
 
-    return(sqrt(pow(intX, 2) + pow(intY, 2)));  // ¼ÆËãÁ½µãÖ®¼äµÄ¾àÀë²¢·µ»Ø
+    return(sqrt(pow(intX, 2) + pow(intY, 2)));  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ä¾ï¿½ï¿½ë²¢ï¿½ï¿½ï¿½ï¿½
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-Õâ¸öº¯ÊýµÄ×÷ÓÃÊÇÔÚÍ¼ÏñÉÏ»æÖÆ²¢Õ¹Ê¾ÂÖÀª¡£Ëü½ÓÊÕÒ»¸öcv::SizeÀàÐÍµÄ²ÎÊýimageSize£¬±íÊ¾Í¼ÏñµÄ´óÐ¡£¬
-Ò»¸östd::vector<std::vectorcv::Point >ÀàÐÍµÄ²ÎÊýcontours£¬±íÊ¾ËùÓÐÒª»æÖÆµÄÂÖÀª£¬
-ÒÔ¼°Ò»¸östd::stringÀàÐÍµÄ²ÎÊýstrImageName£¬±íÊ¾Õ¹Ê¾´°¿ÚµÄÃû³Æ¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½Æ²ï¿½Õ¹Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½cv::Sizeï¿½ï¿½ï¿½ÍµÄ²ï¿½ï¿½ï¿½imageSizeï¿½ï¿½ï¿½ï¿½Ê¾Í¼ï¿½ï¿½Ä´ï¿½Ð¡ï¿½ï¿½
+Ò»ï¿½ï¿½std::vector<std::vectorcv::Point >ï¿½ï¿½ï¿½ÍµÄ²ï¿½ï¿½ï¿½contoursï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½Ô¼ï¿½Ò»ï¿½ï¿½std::stringï¿½ï¿½ï¿½ÍµÄ²ï¿½ï¿½ï¿½strImageNameï¿½ï¿½ï¿½ï¿½Ê¾Õ¹Ê¾ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½Æ¡ï¿½
 
-¸Ãº¯ÊýÊ×ÏÈ¸ù¾ÝÍ¼Ïñ´óÐ¡´´½¨Ò»¸öºÚÉ«µÄÍ¼Ïñ¡£
-È»ºó£¬Ê¹ÓÃcv::drawContoursº¯ÊýÔÚºÚÉ«µÄÍ¼ÏñÉÏ»æÖÆËùÓÐ´«ÈëµÄÂÖÀª¡£
-×îºó£¬Ê¹ÓÃcv::imshowº¯ÊýÕ¹Ê¾»æÖÆºÃÂÖÀªµÄÍ¼Ïñ¡£
+ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¸ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½Í¼ï¿½ï¿½
+È»ï¿½ï¿½Ê¹ï¿½ï¿½cv::drawContoursï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½É«ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½cv::imshowï¿½ï¿½ï¿½ï¿½Õ¹Ê¾ï¿½ï¿½ï¿½Æºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
 
-drawAndShowContours£º»æÖÆÂÖÀª²¢Õ¹Ê¾ÔÚ´°¿ÚÖÐ
-imageSize£º´°¿Ú´óÐ¡
-contours£ºÂÖÀª
-strImageName£º´°¿ÚÃû³Æ
-cv::Mat image(imageSize, CV_8UC3, SCALAR_BLACK);£º´´½¨Ò»¸ö´óÐ¡Îª imageSize µÄºÚÉ«Í¼Ïñ£¬ÆäÖÐ CV_8UC3 ±íÊ¾ÏñËØÀàÐÍÎª 8 Î»ÎÞ·ûºÅÕûÊý£¬Í¨µÀÊýÎª 3
-cv::drawContours(image, contours, -1, SCALAR_WHITE, -1);£ºÔÚ image ÖÐ»æÖÆ contours ÖÐµÄÂÖÀª£¬Ê¹ÓÃ°×É«ÏßÌõ£¬ÏßÌõ¿í¶ÈÎª -1£¬±íÊ¾»æÖÆÂÖÀªÄÚ²¿ÇøÓò
-cv::imshow(strImageName, image);£ºÔÚ´°¿ÚÖÐÕ¹Ê¾Í¼Ïñ£¬´°¿ÚÃû³ÆÎª strImageName
+drawAndShowContoursï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹Ê¾ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½
+imageSizeï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Ð¡
+contoursï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+strImageNameï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+cv::Mat image(imageSize, CV_8UC3, SCALAR_BLACK);ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð¡Îª imageSize ï¿½Äºï¿½É«Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CV_8UC3 ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª 8 Î»ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Îª 3
+cv::drawContours(image, contours, -1, SCALAR_WHITE, -1);ï¿½ï¿½ï¿½ï¿½ image ï¿½Ð»ï¿½ï¿½ï¿½ contours ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã°ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª -1ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½
+cv::imshow(strImageName, image);ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹Ê¾Í¼ï¿½ñ£¬´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª strImageName
 */
 void drawAndShowContours(cv::Size imageSize, std::vector<std::vector<cv::Point> > contours, std::string strImageName) {
-    cv::Mat image(imageSize, CV_8UC3, SCALAR_BLACK);  // ´´½¨Ò»¸öºÚÉ«Í¼Ïñ
+    cv::Mat image(imageSize, CV_8UC3, SCALAR_BLACK);  // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½É«Í¼ï¿½ï¿½
 
-    cv::drawContours(image, contours, -1, SCALAR_WHITE, -1);  // »æÖÆÂÖÀª
+    cv::drawContours(image, contours, -1, SCALAR_WHITE, -1);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    cv::imshow(strImageName, image);  // ÔÚ´°¿ÚÖÐÕ¹Ê¾Í¼Ïñ
+    cv::imshow(strImageName, image);  // ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹Ê¾Í¼ï¿½ï¿½
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-Õâ¸öº¯ÊýµÄ×÷ÓÃÊÇÔÚÍ¼ÏñÉÏ»æÖÆÂÖÀª²¢ÏÔÊ¾½á¹û¡£Ëü½ÓÊÜÈý¸ö²ÎÊý£ºÍ¼Ïñ´óÐ¡¡¢
-Ò»¸öBlob¶ÔÏóµÄÏòÁ¿ºÍ´°¿ÚÃû³Æ¡£º¯ÊýÊ×ÏÈ´´½¨Ò»¸öºÚÉ«µÄÍ¼Ïñ¡£È»ºó£¬º¯Êý±éÀúBlob¶ÔÏóÏòÁ¿
-£¬²¢½«°üº¬ÈÔÔÚ±»¸ú×ÙµÄBlob¶ÔÏóµÄÂÖÀªÌí¼Óµ½ÂÖÀªÏòÁ¿ÖÐ¡£
-½ÓÏÂÀ´£¬cv::drawContours()º¯Êý½«ÂÖÀªÏòÁ¿»æÖÆÔÚºÚÉ«Í¼ÏñÉÏ£¬²¢ÓÃ°×É«Ìî³ä¡£
-×îºó£¬º¯Êý½«ÏÔÊ¾´øÓÐÖ¸¶¨Ãû³ÆµÄÍ¼Ïñ´°¿Ú
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½
+Ò»ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½Í¼ï¿½ï¿½È»ï¿½ó£¬ºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ï¿½Ùµï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½cv::drawContours()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½É«Í¼ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½Ã°ï¿½É«ï¿½ï¿½ä¡£
+ï¿½ï¿½ó£¬ºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Í¼ï¿½ñ´°¿ï¿½
 */
 void drawAndShowContours(cv::Size imageSize, std::vector<Blob> blobs, std::string strImageName) {
 
-    // ´´½¨Ö¸¶¨´óÐ¡µÄºÚÉ«Í¼Ïñ
+    // ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½Äºï¿½É«Í¼ï¿½ï¿½
     cv::Mat image(imageSize, CV_8UC3, SCALAR_BLACK);
 
-    std::vector<std::vector<cv::Point> > contours;  // ´æ´¢ÂÖÀªµÄÈÝÆ÷
+    std::vector<std::vector<cv::Point> > contours;  // ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    // ±éÀúËùÓÐµÄblob£¬Èç¹û¸ÃblobÈÔÈ»±»¸ú×Ù£¬Ôò½«ÆäÂÖÀªÌí¼Óµ½contoursÖÐ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½blobï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½Ù£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½contoursï¿½ï¿½
     for (auto& blob : blobs) {
         if (blob.blnStillBeingTracked == true) {
             contours.push_back(blob.currentContour);
         }
     }
 
-    // ÔÚÍ¼ÏñÉÏ»æÖÆËùÓÐµÄÂÖÀª
+    // ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½
     cv::drawContours(image, contours, -1, SCALAR_WHITE, -1);
 
-    // ÔÚÆÁÄ»ÉÏÏÔÊ¾Í¼Ïñ
+    // ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½Ê¾Í¼ï¿½ï¿½
     cv::imshow(strImageName, image);
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-Õâ¸öº¯ÊýµÄ×÷ÓÃÊÇ¼ì²éÔË¶¯µÄÎïÌåÊÇ·ñ¿ç¹ýÁË¸ø¶¨µÄË®Æ½Ïß£¬Èç¹ûÓÐ¿ç¹ýÔòÔö¼Ó³µÁ¾¼ÆÊýÆ÷£¬
-º¯Êý·µ»ØÊÇ·ñÖÁÉÙÓÐÒ»¸öÎïÌå¿ç¹ýÁËË®Æ½Ïß¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ë¸ï¿½ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ß¡ï¿½
 
-º¯ÊýÊäÈë²ÎÊý°üÀ¨Ò»¸öBlob¶ÔÏóµÄÏòÁ¿£¬±íÊ¾¼ì²âµ½µÄËùÓÐÎïÌå£¬Ò»¸öÕûÊý±íÊ¾Ë®Æ½ÏßµÄÎ»ÖÃ£¬
-ÒÔ¼°Ò»¸öÕûÊý±íÊ¾³µÁ¾¼ÆÊýÆ÷¡£ÔÚº¯ÊýÄÚ²¿£¬¶ÔÓÚÏòÁ¿ÖÐµÄÃ¿¸öBlob¶ÔÏó£¬¼ì²éÊÇ·ñÈÔÔÚ¸ú×Ù
-¸ÃÎïÌå£¬Èç¹ûÊÇ²¢ÇÒ¸ÃÎïÌåÖÁÉÙÔÚÁ½¸öÖ¡ÖÐ±»¼ì²âµ½£¬ÄÇÃ´¼ì²é¸ÃÎïÌåµÄÖÐÐÄÎ»ÖÃÊÇ·ñ¿çÔ½ÁË
-Ë®Æ½Ïß¡£Èç¹ûÊÇ£¬Ôò½«³µÁ¾¼ÆÊýÆ÷Ôö¼Ó1£¬º¯Êý·µ»ØÖµÉèÖÃÎªtrue£¬±íÊ¾ÖÁÉÙÓÐÒ»¸öÎïÌå¿çÔ½ÁËË®Æ½Ïß¡£º¯Êý·µ»Øfalse±íÊ¾Ã»ÓÐÎïÌå¿ç¹ýË®Æ½Ïß¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½âµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¬Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Ë®Æ½ï¿½ßµï¿½Î»ï¿½Ã£ï¿½
+ï¿½Ô¼ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Ã¿ï¿½ï¿½Blobï¿½ï¿½ï¿½ó£¬¼ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½å£¬ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½Ò¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½Ð±ï¿½ï¿½ï¿½âµ½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ô½ï¿½ï¿½
+Ë®Æ½ï¿½ß¡ï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½ï¿½ò½«³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Îªtrueï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½Ë®Æ½ï¿½ß¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½falseï¿½ï¿½Ê¾Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ß¡ï¿½
 */
 bool checkIfBlobsCrossedTheLine(std::vector<Blob>& blobs, int& intHorizontalLinePosition, int& carCount) {
-    bool blnAtLeastOneBlobCrossedTheLine = false; // ±ê¼ÇÊÇ·ñÓÐblob´©¹ýÏß
+    bool blnAtLeastOneBlobCrossedTheLine = false; // ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    for (auto blob : blobs) {  // ±éÀúËùÓÐblob
+    for (auto blob : blobs) {  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½blob
 
-        if (blob.blnStillBeingTracked == true && blob.centerPositions.size() >= 2) {  // Èç¹ûblob»¹ÔÚ±»×·×Ù²¢ÇÒÖÁÉÙÓÐÁ½¸öÎ»ÖÃÐÅÏ¢
+        if (blob.blnStillBeingTracked == true && blob.centerPositions.size() >= 2) {  // ï¿½ï¿½ï¿½blobï¿½ï¿½ï¿½Ú±ï¿½×·ï¿½Ù²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ï¢
 
-            int prevFrameIndex = (int)blob.centerPositions.size() - 2;  // Ç°Ò»¸öÎ»ÖÃµÄË÷Òý
-            int currFrameIndex = (int)blob.centerPositions.size() - 1;  // µ±Ç°Î»ÖÃµÄË÷Òý
+            int prevFrameIndex = (int)blob.centerPositions.size() - 2;  // Ç°Ò»ï¿½ï¿½Î»ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½
+            int currFrameIndex = (int)blob.centerPositions.size() - 1;  // ï¿½ï¿½Ç°Î»ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½
 
-            if (blob.centerPositions[prevFrameIndex].y > intHorizontalLinePosition && blob.centerPositions[currFrameIndex].y <= intHorizontalLinePosition) {  // Èç¹ûblobÉÏÒ»Ö¡ÔÚÏÂ·½£¬µ±Ç°Ö¡ÔÚÉÏ·½£¬ËµÃ÷blob´©¹ýÏß
-                carCount++;  // ³µÁ¾¼ÆÊý¼ÓÒ»
-                blnAtLeastOneBlobCrossedTheLine = true;  // ±ê¼ÇÓÐblob´©¹ýÏß
+            if (blob.centerPositions[prevFrameIndex].y > intHorizontalLinePosition && blob.centerPositions[currFrameIndex].y <= intHorizontalLinePosition) {  // ï¿½ï¿½ï¿½blobï¿½ï¿½Ò»Ö¡ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ö¡ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½Ëµï¿½ï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                carCount++;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»
+                blnAtLeastOneBlobCrossedTheLine = true;  // ï¿½ï¿½ï¿½ï¿½ï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             }
         }
 
     }
 
-    return blnAtLeastOneBlobCrossedTheLine;  // ·µ»ØÊÇ·ñÓÐblob´©¹ýÏß
+    return blnAtLeastOneBlobCrossedTheLine;  // ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-Õâ¸öº¯ÊýÊÇÓÃÀ´ÔÚÍ¼ÏñÉÏ»æÖÆÃ¿¸ö Blob µÄÐÅÏ¢µÄ¡£Ëü½ÓÊÜÁ½¸ö²ÎÊý£ºÒ»¸ö°üº¬ËùÓÐ Blob ¶ÔÏóµÄÏòÁ¿£¬ÒÔ¼°ÐèÒª»æÖÆÐÅÏ¢µÄÍ¼Ïñ¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ Blob ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Blob ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½Í¼ï¿½ï¿½
 
-ÔÚº¯ÊýÖÐ£¬ËüÍ¨¹ýÑ­»·µü´úÃ¿¸ö Blob£¬¼ì²é¸Ã Blob ÊÇ·ñÈÔÔÚ¸ú×ÙÖÐ¡£Èç¹ûÊÇ£¬ÔòÔÚÍ¼ÏñÉÏ»æÖÆ¾ØÐÎ£¬¸Ã¾ØÐÎÓÉ Blob µÄ currentBoundingRect ±äÁ¿¶¨Òå£¬ÓÃºìÉ«»æÖÆ£¬±ß¿ò¿í¶ÈÎª 2¡£
+ï¿½Úºï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½Í¨ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ Blobï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Blob ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½Æ¾ï¿½ï¿½Î£ï¿½ï¿½Ã¾ï¿½ï¿½ï¿½ï¿½ï¿½ Blob ï¿½ï¿½ currentBoundingRect ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¬ï¿½Ãºï¿½É«ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ß¿ï¿½ï¿½ï¿½ï¿½Îª 2ï¿½ï¿½
 
-È»ºó£¬º¯ÊýÊ¹ÓÃµ±Ç° Blob ¶ÔÏóµÄ centerPositions ÏòÁ¿ÖÐµÄ×îºóÒ»¸öµãÀ´¶¨Î»¸Ã Blob ¶ÔÏóÔÚÍ¼ÏñÉÏµÄÎ»ÖÃ£¬¸ÃµãÊÇËüÔÚµ±Ç°Ö¡ÖÐµÄÖÐÐÄ¡£ËüÊ¹ÓÃÕâ¸öµãÀ´½« Blob µÄ ID »æÖÆÔÚÍ¼ÏñÉÏ£¬
-Ê¹ÓÃ cv::putText º¯Êý£¬ÎÄ×Ö´óÐ¡ºÍÑÕÉ«¿ÉÒÔ¸ù¾Ý Blob µÄ´óÐ¡½øÐÐËõ·Å¡£
+È»ï¿½ó£¬ºï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½Ç° Blob ï¿½ï¿½ï¿½ï¿½ï¿½ centerPositions ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ Blob ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ïµï¿½Î»ï¿½Ã£ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½Ç°Ö¡ï¿½Ðµï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Blob ï¿½ï¿½ ID ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï£ï¿½
+Ê¹ï¿½ï¿½ cv::putText ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½ Blob ï¿½Ä´ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¡ï¿½
 */
 void drawBlobInfoOnImage(std::vector<Blob>& blobs, cv::Mat& imgFrame2Copy) {
 
     for (unsigned int i = 0; i < blobs.size(); i++) {
-        // Èç¹û¸ÃblobÈÔÔÚ±»¸ú×Ù£¬ÔòÔÚÍ¼ÏñÖÐ»æÖÆ¸ÃblobµÄµ±Ç°±ß½ç¾ØÐÎ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½blobï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ï¿½Ù£ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ð»ï¿½ï¿½Æ¸ï¿½blobï¿½Äµï¿½Ç°ï¿½ß½ï¿½ï¿½ï¿½ï¿½
         if (blobs[i].blnStillBeingTracked == true) {
             cv::rectangle(imgFrame2Copy, blobs[i].currentBoundingRect, SCALAR_RED, 2);
 
-            // ÉèÖÃ×ÖÌå¡¢´óÐ¡¡¢ºñ¶È
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å¡¢ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½
             int intFontFace = CV_FONT_HERSHEY_SIMPLEX;
             double dblFontScale = blobs[i].dblCurrentDiagonalSize / 60.0;
             int intFontThickness = (int)std::round(dblFontScale * 1.0);
 
-            // ÔÚblobµÄ×îºóÒ»¸öÎ»ÖÃÉÏ»æÖÆblobµÄ±àºÅ
+            // ï¿½ï¿½blobï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½blobï¿½Ä±ï¿½ï¿½
             cv::putText(imgFrame2Copy, std::to_string(i), blobs[i].centerPositions.back(), intFontFace, dblFontScale, SCALAR_GREEN, intFontThickness);
         }
     }
@@ -571,24 +571,24 @@ void drawBlobInfoOnImage(std::vector<Blob>& blobs, cv::Mat& imgFrame2Copy) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//Õâ¸öº¯ÊýÓÃÓÚÔÚÍ¼ÏñÉÏ»æÖÆ³µÁ¾ÊýÁ¿µÄÎÄ±¾
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½
 /*
-Õâ¸öº¯ÊýµÄ×÷ÓÃÊÇÔÚ¸ø¶¨µÄÍ¼ÏñÉÏ»æÖÆ³µÁ¾¼ÆÊý¡£Ëü½ÓÊÜÒ»¸öÕûÊýÀàÐÍµÄ³µÁ¾¼ÆÊýºÍÒ»¸öOpenCV MatÀàÐÍµÄÍ¼Ïñ£¬
-²¢ÔÚÍ¼ÏñµÄÓÒÉÏ½Ç»æÖÆÎÄ±¾£¬ÏÔÊ¾³µÁ¾¼ÆÊý¡£º¯ÊýÊ¹ÓÃCV_FONT_HERSHEY_SIMPLEX×ÖÌåÀàÐÍ£¬¼ÆËãÊÊµ±µÄ×ÖÌå´óÐ¡ºÍÏß¿í£¬È»ºóÔÚ¸ø¶¨µÄÎ»ÖÃ»æÖÆÎÄ±¾¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ï»ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÍµÄ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½OpenCV Matï¿½ï¿½ï¿½Íµï¿½Í¼ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï½Ç»ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½CV_FONT_HERSHEY_SIMPLEXï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ß¿ï¿½ï¿½ï¿½È»ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
 */
 void drawCarCountOnImage(int& carCount, cv::Mat& imgFrame2Copy) {
 
-    int intFontFace = CV_FONT_HERSHEY_SIMPLEX;  // ×ÖÌåÀàÐÍ
-    double dblFontScale = (imgFrame2Copy.rows * imgFrame2Copy.cols) / 300000.0;  // ×ÖÌå´óÐ¡
-    int intFontThickness = (int)std::round(dblFontScale * 1.5);  // ×ÖÌåÏß¿í
+    int intFontFace = CV_FONT_HERSHEY_SIMPLEX;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    double dblFontScale = (imgFrame2Copy.rows * imgFrame2Copy.cols) / 300000.0;  // ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
+    int intFontThickness = (int)std::round(dblFontScale * 1.5);  // ï¿½ï¿½ï¿½ï¿½ï¿½ß¿ï¿½
 
-    cv::Size textSize = cv::getTextSize(std::to_string(carCount), intFontFace, dblFontScale, intFontThickness, 0);  // »ñÈ¡ÎÄ±¾´óÐ¡
+    cv::Size textSize = cv::getTextSize(std::to_string(carCount), intFontFace, dblFontScale, intFontThickness, 0);  // ï¿½ï¿½È¡ï¿½Ä±ï¿½ï¿½ï¿½Ð¡
 
-    cv::Point ptTextBottomLeftPosition;  // ÎÄ±¾×óÏÂ½ÇÎ»ÖÃ
+    cv::Point ptTextBottomLeftPosition;  // ï¿½Ä±ï¿½ï¿½ï¿½ï¿½Â½ï¿½Î»ï¿½ï¿½
 
-    ptTextBottomLeftPosition.x = imgFrame2Copy.cols - 1 - (int)((double)textSize.width * 1.25);  // ¼ÆËãÎÄ±¾×óÏÂ½Çx×ø±ê
-    ptTextBottomLeftPosition.y = (int)((double)textSize.height * 1.25);  // ¼ÆËãÎÄ±¾×óÏÂ½Çy×ø±ê
+    ptTextBottomLeftPosition.x = imgFrame2Copy.cols - 1 - (int)((double)textSize.width * 1.25);  // ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½Â½ï¿½xï¿½ï¿½ï¿½ï¿½
+    ptTextBottomLeftPosition.y = (int)((double)textSize.height * 1.25);  // ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½Â½ï¿½yï¿½ï¿½ï¿½ï¿½
 
-    cv::putText(imgFrame2Copy, std::to_string(carCount), ptTextBottomLeftPosition, intFontFace, dblFontScale, SCALAR_GREEN, intFontThickness);  // »æÖÆÎÄ±¾
+    cv::putText(imgFrame2Copy, std::to_string(carCount), ptTextBottomLeftPosition, intFontFace, dblFontScale, SCALAR_GREEN, intFontThickness);  // ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½
 
 }
