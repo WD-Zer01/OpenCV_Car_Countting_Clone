@@ -49,7 +49,7 @@ Blob::Blob(std::vector<cv::Point> _contour) {
 当轨迹长度为 4 时，同样采用加权平均法来预测下一个位置的位置；
 当轨迹长度大于等于 5 时，同样采用加权平均法来预测下一个位置的位置，不同的是，此时需要考虑前 5 个位置之间的距离，即使用了更多的历史数据进行预测。
 */
-LYJ分支修改测试void Blob::predictNextPosition(void) {
+void Blob::predictNextPosition(void) { //LYJ先合并到主分支，然后查看冲突情况。
 
     // 获取当前Blob的历史中心点位置数量
     int numPositions = (int)centerPositions.size();
