@@ -1,122 +1,152 @@
-// Blob.cpp
-
 #include "Blob.h"
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Blob ç±»çš„æ„é€ å‡½æ•°ï¼Œä¼ å…¥å‚æ•°ä¸ºcv::Point å¯¹è±¡çš„å‘é‡
+Blob::Blob(std::vector<cv::Point> _contour) {
+    // å½“å‰ Blob å¯¹è±¡çš„è½®å»“ç‚¹è®¾ç½®ä¸ºä¼ å…¥çš„å‚æ•°
+    currentContour = _contour;
 
-Blob::Blob(std::vector<cv::Point> _contour) {  // ¹¹Ôìº¯Êı£¬´«Èë°üº¬ÔË¶¯ÎïÌåµÄÂÖÀªµãµÄvector¶ÔÏó
+    // è·å–å½“å‰ Blob å¯¹è±¡çš„è¾¹ç•ŒçŸ©å½¢
+    currentBoundingRect = cv::boundingRect(currentContour);
 
-    currentContour = _contour;  // ±£´æ´«ÈëµÄÂÖÀªµã
+    // å®šä¹‰ä¸€ä¸ª Point å¯¹è±¡è¡¨ç¤ºå½“å‰ Blob å¯¹è±¡çš„ä¸­å¿ƒç‚¹
+    cv::Point currentCenter;
 
-    currentBoundingRect = cv::boundingRect(currentContour);  // ÓÃÂÖÀªµã´´½¨±ß¿ò¾ØĞÎ£¬±£´æ
+    // è®¡ç®—ä¸­å¿ƒç‚¹çš„ x åæ ‡
+    currentCenter.x = (currentBoundingRect.x + currentBoundingRect.x + currentBoundingRect.width) / 2;
 
-    cv::Point currentCenter;  // ´´½¨Ò»¸ö±£´æµ±Ç°ÖĞĞÄµã×ø±êµÄPoint¶ÔÏó
+    // è®¡ç®—ä¸­å¿ƒç‚¹çš„ y åæ ‡
+    currentCenter.y = (currentBoundingRect.y + currentBoundingRect.y + currentBoundingRect.height) / 2;
 
-    currentCenter.x = (currentBoundingRect.x + currentBoundingRect.x + currentBoundingRect.width) / 2;  // ¼ÆËãµ±Ç°ÖĞĞÄµãx×ø±ê
-    currentCenter.y = (currentBoundingRect.y + currentBoundingRect.y + currentBoundingRect.height) / 2;  // ¼ÆËãµ±Ç°ÖĞĞÄµãy×ø±ê
+    // å°†ä¸­å¿ƒç‚¹åæ ‡æ·»åŠ åˆ° centerPositions ä¸­
+    centerPositions.push_back(currentCenter);
 
-    centerPositions.push_back(currentCenter);  // ½«µ±Ç°ÖĞĞÄµã±£´æµ½vector¶ÔÏóÖĞ
+    // è®¡ç®—å½“å‰ Blob å¯¹è±¡çš„å¯¹è§’çº¿é•¿åº¦
+    dblCurrentDiagonalSize = sqrt(pow(currentBoundingRect.width, 2) + pow(currentBoundingRect.height, 2));
 
-    dblCurrentDiagonalSize = sqrt(pow(currentBoundingRect.width, 2) + pow(currentBoundingRect.height, 2));  // ¼ÆËãµ±Ç°±ß¿ò¾ØĞÎµÄ¶Ô½ÇÏß´óĞ¡
+    // è®¡ç®—å½“å‰ Blob å¯¹è±¡çš„å®½é«˜æ¯”
+    dblCurrentAspectRatio = (float)currentBoundingRect.width / (float)currentBoundingRect.height;
 
-    dblCurrentAspectRatio = (float)currentBoundingRect.width / (float)currentBoundingRect.height;  // ¼ÆËãµ±Ç°±ß¿ò¾ØĞÎµÄ¿í¸ß±È
+    // è®¾ç½®å½“å‰ Blob å¯¹è±¡ä»åœ¨è¢«è·Ÿè¸ª
+    blnStillBeingTracked = true;
 
-    blnStillBeingTracked = true;  // ÉèÖÃµ±Ç°Blob¶ÔÏó»¹ÔÚ±»×·×Ù
+    // å½“å‰ Blob å¯¹è±¡æ˜¯æ–°çš„æˆ–è€…å·²ç»è¢«åŒ¹é…
+    blnCurrentMatchFoundOrNewBlob = true;
 
-    blnCurrentMatchFoundOrNewBlob = true;  // ÉèÖÃµ±Ç°Blob¶ÔÏóÊÇĞÂµÄ»¹ÊÇÒÑ¾­Æ¥Åäµ½
-
-    intNumOfConsecutiveFramesWithoutAMatch = 0;  // ³õÊ¼»¯µ±Ç°Blob¶ÔÏóÎ´Æ¥Åäµ½µÄÖ¡Êı
+    // å½“å‰ Blob å¯¹è±¡åœ¨è¿ç»­çš„å¸§ä¸­æ²¡æœ‰è¢«åŒ¹é…çš„æ•°é‡ä¸º 0
+    intNumOfConsecutiveFramesWithoutAMatch = 0;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+è¿™æ˜¯ä¸€æ®µ C++ ä»£ç ï¼Œå…¶ç›®çš„æ˜¯æ ¹æ®ç‰©ä½“çš„ç§»åŠ¨è½¨è¿¹ï¼Œé¢„æµ‹å‡ºç‰©ä½“ä¸‹ä¸€æ­¥çš„ä½ç½®ã€‚ä»£ç ä¸­å®šä¹‰äº†ä¸€ä¸ªå«åš Blob çš„ç±»ï¼Œ
+å¹¶åœ¨è¯¥ç±»ä¸­å®ç°äº†ä¸€ä¸ªå«åš predictNextPosition çš„æˆå‘˜å‡½æ•°ï¼Œç”¨äºé¢„æµ‹ç‰©ä½“çš„ä¸‹ä¸€ä¸ªä½ç½®ã€‚
+
+ä»£ç ä¸­ï¼Œé¦–å…ˆè·å–äº†ç‰©ä½“ç§»åŠ¨è½¨è¿¹çš„é•¿åº¦ï¼Œå³ centerPositions çš„å¤§å°ï¼Œç„¶åé€šè¿‡ä¸åŒçš„åˆ†æ”¯ç»“æ„ï¼Œå¯¹ä¸åŒé•¿åº¦çš„è½¨è¿¹é‡‡ç”¨ä¸åŒçš„é¢„æµ‹æ–¹æ³•ã€‚
+
+å½“è½¨è¿¹é•¿åº¦ä¸º 1 æ—¶ï¼Œç›´æ¥å°†æœ€åä¸€ä¸ªä½ç½®ä½œä¸ºä¸‹ä¸€ä¸ªä½ç½®çš„é¢„æµ‹å€¼ï¼›
+å½“è½¨è¿¹é•¿åº¦ä¸º 2 æ—¶ï¼Œé€šè¿‡è®¡ç®—ä¸¤ä¸ªä½ç½®ä¹‹é—´çš„è·ç¦»ï¼Œæ¥é¢„æµ‹ä¸‹ä¸€ä¸ªä½ç½®çš„ä½ç½®ï¼›
+å½“è½¨è¿¹é•¿åº¦ä¸º 3 æ—¶ï¼Œé‡‡ç”¨åŠ æƒå¹³å‡æ³•æ¥é¢„æµ‹ä¸‹ä¸€ä¸ªä½ç½®çš„ä½ç½®ï¼›
+å½“è½¨è¿¹é•¿åº¦ä¸º 4 æ—¶ï¼ŒåŒæ ·é‡‡ç”¨åŠ æƒå¹³å‡æ³•æ¥é¢„æµ‹ä¸‹ä¸€ä¸ªä½ç½®çš„ä½ç½®ï¼›
+å½“è½¨è¿¹é•¿åº¦å¤§äºç­‰äº 5 æ—¶ï¼ŒåŒæ ·é‡‡ç”¨åŠ æƒå¹³å‡æ³•æ¥é¢„æµ‹ä¸‹ä¸€ä¸ªä½ç½®çš„ä½ç½®ï¼Œä¸åŒçš„æ˜¯ï¼Œæ­¤æ—¶éœ€è¦è€ƒè™‘å‰ 5 ä¸ªä½ç½®ä¹‹é—´çš„è·ç¦»ï¼Œå³ä½¿ç”¨äº†æ›´å¤šçš„å†å²æ•°æ®è¿›è¡Œé¢„æµ‹ã€‚
+*/
 void Blob::predictNextPosition(void) {
 
+    // è·å–å½“å‰Blobçš„å†å²ä¸­å¿ƒç‚¹ä½ç½®æ•°é‡
     int numPositions = (int)centerPositions.size();
-    // ÖĞĞÄÎ»ÖÃÏòÁ¿µÄ³¤¶È
 
+    // å¦‚æœå†å²ä¸­å¿ƒç‚¹ä½ç½®æ•°é‡ä¸º1ï¼Œå³å½“å‰Blobåªæœ‰ä¸€ä¸ªä¸­å¿ƒç‚¹
     if (numPositions == 1) {
-        // Èç¹ûÖĞĞÄÎ»ÖÃÏòÁ¿µÄ³¤¶ÈÎª1
-
+        // åˆ™é¢„æµ‹ä¸‹ä¸€æ­¥çš„ä½ç½®ä¸ºå½“å‰ä¸­å¿ƒç‚¹çš„ä½ç½®
         predictedNextPosition.x = centerPositions.back().x;
         predictedNextPosition.y = centerPositions.back().y;
-        // Ô¤²âµÄÏÂÒ»¸öÎ»ÖÃµÈÓÚµ±Ç°µÄÎ»ÖÃ
 
     }
+    // å¦‚æœå†å²ä¸­å¿ƒç‚¹ä½ç½®æ•°é‡ä¸º2ï¼Œå³å½“å‰Blobæœ‰ä¸¤ä¸ªä¸­å¿ƒç‚¹
     else if (numPositions == 2) {
-        // Èç¹ûÖĞĞÄÎ»ÖÃÏòÁ¿µÄ³¤¶ÈÎª2
 
+        // è®¡ç®—ä¸­å¿ƒç‚¹ä½ç½®å˜åŒ–é‡
         int deltaX = centerPositions[1].x - centerPositions[0].x;
         int deltaY = centerPositions[1].y - centerPositions[0].y;
-        // ¼ÆËãxºÍy·½ÏòÉÏµÄ±ä»¯Á¿
 
+        // åˆ™é¢„æµ‹ä¸‹ä¸€æ­¥çš„ä½ç½®ä¸ºå½“å‰ä¸­å¿ƒç‚¹çš„ä½ç½®å†åŠ ä¸Šä¸­å¿ƒç‚¹ä½ç½®å˜åŒ–é‡
         predictedNextPosition.x = centerPositions.back().x + deltaX;
         predictedNextPosition.y = centerPositions.back().y + deltaY;
-        // Ô¤²âÏÂÒ»¸öÎ»ÖÃµÈÓÚµ±Ç°Î»ÖÃ¼ÓÉÏ±ä»¯Á¿
 
     }
+    // å¦‚æœå†å²ä¸­å¿ƒç‚¹ä½ç½®æ•°é‡ä¸º3ï¼Œå³å½“å‰Blobæœ‰ä¸‰ä¸ªä¸­å¿ƒç‚¹
     else if (numPositions == 3) {
-        // Èç¹ûÖĞĞÄÎ»ÖÃÏòÁ¿µÄ³¤¶ÈÎª3
 
+        // è®¡ç®—ä¸­å¿ƒç‚¹ä½ç½®å˜åŒ–é‡ä¹‹å’Œï¼ˆxè½´ï¼‰
         int sumOfXChanges = ((centerPositions[2].x - centerPositions[1].x) * 2) +
             ((centerPositions[1].x - centerPositions[0].x) * 1);
-        // ¼ÆËãx·½ÏòÉÏµÄ±ä»¯Á¿Ö®ºÍ
 
+        // è®¡ç®—ä¸­å¿ƒç‚¹ä½ç½®å˜åŒ–é‡ä¹‹å’Œçš„å¹³å‡å€¼ï¼ˆxè½´ï¼‰
         int deltaX = (int)std::round((float)sumOfXChanges / 3.0);
-        // ¼ÆËãx·½ÏòÉÏµÄÆ½¾ù±ä»¯Á¿
 
+        // è®¡ç®—ä¸­å¿ƒç‚¹ä½ç½®å˜åŒ–é‡ä¹‹å’Œï¼ˆyè½´ï¼‰
         int sumOfYChanges = ((centerPositions[2].y - centerPositions[1].y) * 2) +
             ((centerPositions[1].y - centerPositions[0].y) * 1);
-        // ¼ÆËãy·½ÏòÉÏµÄ±ä»¯Á¿Ö®ºÍ
 
+        // è®¡ç®—ä¸­å¿ƒç‚¹ä½ç½®å˜åŒ–é‡ä¹‹å’Œçš„å¹³å‡å€¼ï¼ˆyè½´ï¼‰
         int deltaY = (int)std::round((float)sumOfYChanges / 3.0);
-        // ¼ÆËãy·½ÏòÉÏµÄÆ½¾ù±ä»¯Á¿
 
+        // é¢„æµ‹ä¸‹ä¸€æ­¥çš„ä½ç½®ä¸ºå½“å‰ä¸­å¿ƒç‚¹çš„ä½ç½®å†åŠ ä¸Šä¸­å¿ƒç‚¹ä½ç½®å˜åŒ–é‡çš„å¹³å‡å€¼
         predictedNextPosition.x = centerPositions.back().x + deltaX;
         predictedNextPosition.y = centerPositions.back().y + deltaY;
-        // Ô¤²âÏÂÒ»¸öÎ»ÖÃµÈÓÚµ±Ç°Î»ÖÃ¼ÓÉÏÆ½¾ù±ä»¯Á¿
+
     }
-    // Èç¹ûÄ¿±êÎïÌåµÄÖĞĞÄµã×ø±êÀúÊ·¼ÇÂ¼³¤¶ÈÎª4
+    /*
+    è¿™æ®µä»£ç é€šè¿‡è®¡ç®—è¿åŠ¨ç‰©ä½“åœ¨å‰å››å¸§ä¸­åœ¨xå’Œyæ–¹å‘ä¸Šçš„ç§»åŠ¨è·ç¦»ï¼Œæ¥é¢„æµ‹ä¸‹ä¸€å¸§ä¸­ç‰©ä½“çš„ä½ç½®ã€‚
+    é¦–å…ˆï¼Œä»£ç å°†å‰å››å¸§ä¸­ç‰©ä½“åœ¨xå’Œyæ–¹å‘ä¸Šçš„ç§»åŠ¨è·ç¦»åŠ æƒæ±‚å’Œï¼Œæƒé‡åˆ†åˆ«ä¸º3ã€2ã€1ï¼Œå¾—åˆ°ç‰©ä½“åœ¨xå’Œyæ–¹å‘ä¸Šçš„æ€»ç§»åŠ¨è·ç¦»ã€‚
+    ç„¶åï¼Œä»£ç å°†æ€»ç§»åŠ¨è·ç¦»é™¤ä»¥6ï¼Œå–æ•´åå¾—åˆ°å¹³å‡æ¯å¸§çš„ç§»åŠ¨è·ç¦»ã€‚
+    æœ€åï¼Œä»£ç é€šè¿‡å°†ä¸Šä¸€å¸§ç‰©ä½“çš„ä½ç½®åŠ ä¸Šå¹³å‡ç§»åŠ¨è·ç¦»ï¼Œå¾—åˆ°é¢„æµ‹çš„ä¸‹ä¸€å¸§ç‰©ä½“çš„ä½ç½®ã€‚
+    */
+    // å¦‚æœè§‚å¯Ÿåˆ°è½¦è¾†è¿ç»­ç§»åŠ¨äº†4å¸§
     else if (numPositions == 4) {
-        // ¼ÆËãÄ¿±êÎïÌåÔÚË®Æ½·½ÏòÉÏµÄ±ä»¯Á¿£¬È¨ÖØ·Ö±ğÎª3¡¢2¡¢1
+
+        // è®¡ç®—Xæ–¹å‘çš„å˜åŒ–æ€»å’Œ
         int sumOfXChanges = ((centerPositions[3].x - centerPositions[2].x) * 3) +
             ((centerPositions[2].x - centerPositions[1].x) * 2) +
             ((centerPositions[1].x - centerPositions[0].x) * 1);
 
-        // ¼ÆËãË®Æ½·½ÏòÉÏµÄ±ä»¯Á¿Æ½¾ùÖµ
+        // è®¡ç®—Xæ–¹å‘çš„å˜åŒ–å¹³å‡å€¼
         int deltaX = (int)std::round((float)sumOfXChanges / 6.0);
 
-        // ¼ÆËãÄ¿±êÎïÌåÔÚÊúÖ±·½ÏòÉÏµÄ±ä»¯Á¿£¬È¨ÖØ·Ö±ğÎª3¡¢2¡¢1
+        // è®¡ç®—Yæ–¹å‘çš„å˜åŒ–æ€»å’Œ
         int sumOfYChanges = ((centerPositions[3].y - centerPositions[2].y) * 3) +
             ((centerPositions[2].y - centerPositions[1].y) * 2) +
             ((centerPositions[1].y - centerPositions[0].y) * 1);
 
-        // ¼ÆËãÊúÖ±·½ÏòÉÏµÄ±ä»¯Á¿Æ½¾ùÖµ
+        // è®¡ç®—Yæ–¹å‘çš„å˜åŒ–å¹³å‡å€¼
         int deltaY = (int)std::round((float)sumOfYChanges / 6.0);
 
-        // Ô¤²âÄ¿±êÎïÌåÏÂÒ»´ÎµÄÖĞĞÄµã×ø±ê
+        // é¢„æµ‹ä¸‹ä¸€æ­¥çš„ä½ç½®ä¸ºå½“å‰ä¸­å¿ƒç‚¹çš„ä½ç½®å†åŠ ä¸Šä¸­å¿ƒç‚¹ä½ç½®å˜åŒ–é‡çš„å¹³å‡å€¼
         predictedNextPosition.x = centerPositions.back().x + deltaX;
         predictedNextPosition.y = centerPositions.back().y + deltaY;
 
-
     }
+    // å¦‚æœè§‚å¯Ÿåˆ°è½¦è¾†è¿ç»­ç§»åŠ¨äº†5å¸§åŠä»¥ä¸Š
     else if (numPositions >= 5) {
 
-        // ¼ÆËãÄ¿±êÎïÌåÔÚË®Æ½·½ÏòÉÏµÄ±ä»¯Á¿£¬È¨ÖØ·Ö±ğÎª3¡¢2¡¢1
-        int sumOfXChanges = ((centerPositions[3].x - centerPositions[2].x) * 3) +
-            ((centerPositions[2].x - centerPositions[1].x) * 2) +
-            ((centerPositions[1].x - centerPositions[0].x) * 1);
+        // è®¡ç®—xè½´æ–¹å‘ç§»åŠ¨çš„æ€»å’Œ
+        int sumOfXChanges = ((centerPositions[numPositions - 1].x - centerPositions[numPositions - 2].x) * 4) +
+            ((centerPositions[numPositions - 2].x - centerPositions[numPositions - 3].x) * 3) +
+            ((centerPositions[numPositions - 3].x - centerPositions[numPositions - 4].x) * 2) +
+            ((centerPositions[numPositions - 4].x - centerPositions[numPositions - 5].x) * 1);
 
-        // ¼ÆËãË®Æ½·½ÏòÉÏµÄ±ä»¯Á¿Æ½¾ùÖµ
-        int deltaX = (int)std::round((float)sumOfXChanges / 6.0);
+        // è®¡ç®—Xæ–¹å‘çš„å˜åŒ–å¹³å‡å€¼
+        int deltaX = (int)std::round((float)sumOfXChanges / 10.0);
 
-        // ¼ÆËãÄ¿±êÎïÌåÔÚÊúÖ±·½ÏòÉÏµÄ±ä»¯Á¿£¬È¨ÖØ·Ö±ğÎª3¡¢2¡¢1
-        int sumOfYChanges = ((centerPositions[3].y - centerPositions[2].y) * 3) +
-            ((centerPositions[2].y - centerPositions[1].y) * 2) +
-            ((centerPositions[1].y - centerPositions[0].y) * 1);
+        // è®¡ç®—yè½´æ–¹å‘ç§»åŠ¨çš„æ€»å’Œ
+        int sumOfYChanges = ((centerPositions[numPositions - 1].y - centerPositions[numPositions - 2].y) * 4) +
+            ((centerPositions[numPositions - 2].y - centerPositions[numPositions - 3].y) * 3) +
+            ((centerPositions[numPositions - 3].y - centerPositions[numPositions - 4].y) * 2) +
+            ((centerPositions[numPositions - 4].y - centerPositions[numPositions - 5].y) * 1);
 
-        // ¼ÆËãÊúÖ±·½ÏòÉÏµÄ±ä»¯Á¿Æ½¾ùÖµ
-        int deltaY = (int)std::round((float)sumOfYChanges / 6.0);
+        // è®¡ç®—yæ–¹å‘çš„å˜åŒ–å¹³å‡å€¼
+        int deltaY = (int)std::round((float)sumOfYChanges / 10.0);
 
-        // Ô¤²âÄ¿±êÎïÌåÏÂÒ»´ÎµÄÖĞĞÄµã×ø±ê
+        // é¢„æµ‹ä¸‹ä¸€æ­¥çš„ä½ç½®ä¸ºå½“å‰ä¸­å¿ƒç‚¹çš„ä½ç½®å†åŠ ä¸Šä¸­å¿ƒç‚¹ä½ç½®å˜åŒ–é‡çš„å¹³å‡å€¼
         predictedNextPosition.x = centerPositions.back().x + deltaX;
         predictedNextPosition.y = centerPositions.back().y + deltaY;
 
@@ -126,40 +156,3 @@ void Blob::predictNextPosition(void) {
     }
 
 }
-
-/*
-    # ¼ÆËã X ÖáÎ»ÖÃ±ä»¯Á¿Ö®ºÍ£¬ÆäÖĞ×îºóÒ»¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ3£¬µ¹ÊıµÚ¶ş¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ2£¬µ¹ÊıµÚÈı¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ1
-    int sumOfXChanges = ((centerPositions[3].x - centerPositions[2].x) * 3) +
-        ((centerPositions[2].x - centerPositions[1].x) * 2) +
-        ((centerPositions[1].x - centerPositions[0].x) * 1);
-
-    # ¼ÆËã X Öá±ä»¯Á¿µÄÆ½¾ùÖµ£¬Ïò×î½üµÄÕûÊıËÄÉáÎåÈë
-    int deltaX = (int)std::round((float)sumOfXChanges / 6.0);
-
-    # ¼ÆËã Y ÖáÎ»ÖÃ±ä»¯Á¿Ö®ºÍ£¬ÆäÖĞ×îºóÒ»¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ3£¬µ¹ÊıµÚ¶ş¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ2£¬µ¹ÊıµÚÈı¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ1
-    int sumOfYChanges = ((centerPositions[3].y - centerPositions[2].y) * 3) +
-        ((centerPositions[2].y - centerPositions[1].y) * 2) +
-        ((centerPositions[1].y - centerPositions[0].y) * 1);
-
-    # ¼ÆËã Y Öá±ä»¯Á¿µÄÆ½¾ùÖµ£¬Ïò×î½üµÄÕûÊıËÄÉáÎåÈë
-    int deltaY = (int)std::round((float)sumOfYChanges / 6.0);
-
-    # Ô¤²â¶ÔÏóÏÂÒ»¸öÎ»ÖÃµÄ X¡¢Y ×ø±êÖµ
-    predictedNextPosition.x = centerPositions.back().x + deltaX;
-    predictedNextPosition.y = centerPositions.back().y + deltaY;
-
-}
-# Èç¹û¼ì²âµ½µÄÖĞĞÄÎ»ÖÃÊıÁ¿´óÓÚµÈÓÚ 5
-else if (numPositions >= 5) {
-
-    # ¼ÆËã X ÖáÎ»ÖÃ±ä»¯Á¿Ö®ºÍ£¬ÆäÖĞ×îºóÒ»¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ4£¬µ¹ÊıµÚ¶ş¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ3£¬µ¹ÊıµÚÈı¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ2£¬µ¹ÊıµÚËÄ¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ1
-    int sumOfXChanges = ((centerPositions[numPositions - 1].x - centerPositions[numPositions - 2].x) * 4) +
-        ((centerPositions[numPositions - 2].x - centerPositions[numPositions - 3].x) * 3) +
-        ((centerPositions[numPositions - 3].x - centerPositions[numPositions - 4].x) * 2) +
-        ((centerPositions[numPositions - 4].x - centerPositions[numPositions - 5].x) * 1);
-
-    # ¼ÆËã X Öá±ä»¯Á¿µÄÆ½¾ùÖµ£¬Ïò×î½üµÄÕûÊıËÄÉáÎåÈë
-    int deltaX = (int)std::round((float)sumOfXChanges / 10.0);
-
-    # ¼ÆËã Y ÖáÎ»ÖÃ±ä»¯Á¿Ö®ºÍ£¬ÆäÖĞ×îºóÒ»¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ4£¬µ¹ÊıµÚ¶ş¸öÎ»ÖÃ±ä»¯Á¿³ËÒÔ3£¬µ¹ÊıµÚÈı¸öÎ»ÖÃ
-*/
